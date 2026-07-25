@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="tk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bulak — dolandyryş</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F8F4EC; --bg-warm: #F6F1E7; --card: #FFFDF8; --ink: #241D15; --ink-soft: #8A7C62;
+    --gold: #B58A3C; --gold-soft: #E8D3A2; --gold-line: #ECE2CE; --line: #E7DDC9;
+    --accent: #C2410C; --danger: #E11D48; --ok: #3B6D11;
+    --shadow: 0 1px 3px rgba(40,30,15,0.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--ink); font-family: 'Poppins', sans-serif; font-size: 14px; -webkit-font-smoothing: antialiased; }
+  .serif { font-family: 'Playfair Display', serif; }
+  button { font-family: 'Poppins', sans-serif; cursor: pointer; }
+
+  .btn { border: none; border-radius: 10px; font-weight: 600; font-size: 13.5px; padding: 10px 18px; transition: all .15s; }
+  .btn:active { transform: scale(.97); }
+  .btn-gold { background: var(--gold); color: #fff; } .btn-gold:hover { background: #A67B2E; }
+  .btn-outline { background: transparent; color: var(--gold); border: 1.5px solid var(--gold-soft); } .btn-outline:hover { background: var(--bg-warm); border-color: var(--gold); }
+  .btn-danger { background: transparent; color: var(--danger); border: 1.5px solid #F5C4C4; } .btn-danger:hover { background: #FDECEC; }
+  .btn-ok { background: var(--ok); color: #fff; }
+  .btn-sm { padding: 7px 13px; font-size: 12.5px; border-radius: 8px; }
+  .btn-ghost { background: transparent; color: var(--ink-soft); border: none; } .btn-ghost:hover { color: var(--ink); }
+  .full { width: 100%; }
+
+  /* ===== LOGIN ===== */
+  #login { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .login-card { background: var(--card); border-radius: 22px; box-shadow: 0 8px 40px rgba(40,30,15,0.10); padding: 46px 38px 34px; width: 100%; max-width: 380px; text-align: center; border: 1px solid var(--gold-line); }
+  .login-card h1 { font-size: 34px; font-weight: 700; letter-spacing: .5px; margin-bottom: 6px; }
+  .login-card .tag { color: var(--ink-soft); font-size: 13px; margin-bottom: 30px; letter-spacing: .3px; }
+  .in-field { text-align: left; margin-bottom: 16px; }
+  .in-field label { display: block; font-size: 12px; font-weight: 600; color: var(--ink-soft); margin-bottom: 7px; }
+  .in-wrap { position: relative; }
+  .in-field input { width: 100%; padding: 13px 14px; border: 1.5px solid var(--line); border-radius: 12px; font-size: 15px; font-family: 'Poppins'; background: var(--bg-warm); color: var(--ink); transition: border .15s; }
+  .in-field input:focus { outline: none; border-color: var(--gold); background: #fff; }
+  .eye-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 8px; color: var(--ink-soft); display: flex; }
+  .eye-btn svg { width: 20px; height: 20px; }
+  #loginErr { color: var(--danger); font-size: 13px; min-height: 18px; margin-top: 12px; font-weight: 500; }
+  .credit { margin-top: 26px; font-size: 12px; color: var(--ink-soft); letter-spacing: .3px; }
+  .credit b { color: var(--gold); font-weight: 600; }
+
+  /* ===== APP ===== */
+  #app { display: none; }
+  .topbar { background: var(--card); border-bottom: 1px solid var(--gold-line); padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 20; }
+  .topbar .brand h1 { font-size: 21px; font-weight: 700; letter-spacing: .3px; }
+  .topbar .right { display: flex; align-items: center; gap: 10px; }
+  .role-chip { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; background: var(--gold-soft); color: #6E521C; }
+  .role-chip.admin { background: #241D15; color: var(--gold-soft); }
+  .whoami { font-size: 13px; color: var(--ink-soft); }
+
+  .tabbar { display: flex; gap: 2px; padding: 0 12px; background: var(--card); border-bottom: 1px solid var(--gold-line); position: sticky; top: 55px; z-index: 19; overflow-x: auto; }
+  .tab { padding: 12px 15px; font-size: 13.5px; font-weight: 600; color: var(--ink-soft); border: none; background: none; border-bottom: 2.5px solid transparent; margin-bottom: -1px; display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+  .tab:hover { color: var(--ink); }
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab .badge { background: var(--danger); color: #fff; font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 10px; min-width: 17px; text-align: center; }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ===== POETS: mobil-first (list → detail) ===== */
+  .poets-wrap { max-width: 1120px; margin: 0 auto; padding: 16px; }
+  /* Desktop: 2 pane, her biri özbaşdak skrol */
+  .split { display: flex; gap: 20px; align-items: flex-start; }
+  .pane-poets { width: 330px; flex-shrink: 0; position: sticky; top: 96px; }
+  .poet-list-scroll { max-height: calc(100vh - 230px); overflow-y: auto; padding-right: 4px; margin-right: -4px; }
+  .poet-list-scroll::-webkit-scrollbar { width: 6px; }
+  .poet-list-scroll::-webkit-scrollbar-thumb { background: var(--gold-line); border-radius: 3px; }
+  .pane-main { flex: 1; min-width: 0; }
+
+  .search-box { width: 100%; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 12px; font-size: 14px; font-family: 'Poppins'; background: var(--card); margin-bottom: 8px; }
+  .search-box:focus { outline: none; border-color: var(--gold); }
+  .poet-list-scroll { }
+  .era-h { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--gold); margin: 16px 4px 8px; }
+  .poet-row { display: flex; align-items: center; gap: 11px; padding: 9px 10px; border-radius: 12px; cursor: pointer; transition: background .12s; }
+  .poet-row:hover { background: var(--bg-warm); }
+  .poet-row.sel { background: var(--ink); }
+  .poet-av { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; background: var(--gold-soft); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display'; font-weight: 700; color: #6E521C; font-size: 16px; overflow: hidden; }
+  .poet-av img { width: 100%; height: 100%; object-fit: cover; }
+  .poet-row .pn { font-size: 14px; font-weight: 500; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .poet-row .pc { font-size: 12px; color: var(--ink-soft); }
+  .poet-row.sel .pn { color: #fff; } .poet-row.sel .pc { color: var(--gold-soft); }
+
+  .card { background: var(--card); border: 1px solid var(--gold-line); border-radius: 16px; box-shadow: var(--shadow); }
+  .back-btn { display: none; align-items: center; gap: 6px; background: none; border: none; color: var(--gold); font-weight: 600; font-size: 14px; padding: 8px 0; margin-bottom: 8px; }
+  .poet-hero { padding: 20px 22px; display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
+  .poet-hero .big-av { width: 72px; height: 72px; border-radius: 18px; flex-shrink: 0; overflow: hidden; background: var(--gold-soft); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display'; font-weight: 700; color: #6E521C; font-size: 30px; }
+  .poet-hero .big-av img { width: 100%; height: 100%; object-fit: cover; }
+  .poet-hero h2 { font-size: 24px; font-weight: 700; line-height: 1.12; margin-bottom: 5px; }
+  .poet-hero .yrs { color: var(--gold); font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .poet-hero .bio { color: var(--ink-soft); font-size: 12.5px; line-height: 1.6; max-height: 4.8em; overflow: hidden; }
+  .poet-hero .acts { display: flex; gap: 7px; flex-shrink: 0; flex-direction: column; }
+
+  .list-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 2px 12px; flex-wrap: wrap; }
+  .list-head h3 { font-size: 15px; font-weight: 600; color: var(--ink-soft); }
+  .list-head .tools { display: flex; gap: 8px; align-items: center; }
+  .sort-sel { padding: 7px 11px; border: 1.5px solid var(--line); border-radius: 9px; font-size: 12.5px; font-family: 'Poppins'; background: var(--card); color: var(--ink); font-weight: 500; }
+  .poem-item { background: var(--card); border: 1px solid var(--gold-line); border-radius: 13px; padding: 14px 16px; margin-bottom: 9px; cursor: pointer; transition: all .13s; box-shadow: var(--shadow); }
+  .poem-item:hover { border-color: var(--gold-soft); transform: translateY(-1px); }
+  .poem-item .pt { font-family: 'Playfair Display'; font-size: 17px; font-weight: 600; margin-bottom: 5px; }
+  .poem-item .pe { color: var(--ink-soft); font-size: 12.5px; line-height: 1.55; white-space: pre-line; max-height: 3em; overflow: hidden; }
+  .hint { text-align: center; color: var(--ink-soft); font-size: 14px; padding: 60px 20px; }
+
+  /* Boş ekran - hoşgeldiň */
+  .welcome-pane { padding: 8px; }
+  .welcome-card { background: var(--card); border: 1px solid var(--gold-line); border-radius: 18px; padding: 34px 30px; text-align: center; box-shadow: var(--shadow); margin-bottom: 16px; }
+  .welcome-card h2 { font-family: 'Playfair Display'; font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+  .welcome-card p { color: var(--ink-soft); font-size: 13.5px; line-height: 1.6; max-width: 400px; margin: 0 auto 20px; }
+  .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .stat-box { background: var(--bg-warm); border-radius: 13px; padding: 16px 12px; }
+  .stat-box .num { font-family: 'Playfair Display'; font-size: 28px; font-weight: 700; color: var(--gold); line-height: 1; }
+  .stat-box .lbl { font-size: 11.5px; color: var(--ink-soft); margin-top: 5px; }
+  .welcome-actions { display: flex; gap: 10px; justify-content: center; margin-top: 22px; flex-wrap: wrap; }
+
+  /* Log + Pending */
+  .inner-wrap { max-width: 1120px; margin: 0 auto; padding: 18px; }
+  .sessions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .sess-card { background: var(--card); border: 1px solid var(--gold-line); border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow); }
+  .sess-card .su { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; }
+  .sess-card .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+  .sess-card .un { font-weight: 600; font-size: 14px; }
+  .sess-card .st { font-size: 12px; color: var(--ink-soft); }
+  .log-line { display: flex; gap: 12px; padding: 11px 4px; border-bottom: 1px solid var(--gold-line); align-items: baseline; }
+  .log-line:last-child { border-bottom: none; }
+  .log-time { font-size: 11.5px; color: var(--ink-soft); width: 118px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .log-user { font-weight: 600; font-size: 12.5px; width: 80px; flex-shrink: 0; }
+  .log-act { font-size: 12.5px; } .log-act .a { font-weight: 600; color: var(--gold); } .log-act .d { color: var(--ink-soft); }
+  .section-title { font-family: 'Playfair Display'; font-size: 20px; font-weight: 700; margin-bottom: 13px; }
+
+  .pend-card { background: var(--card); border: 1px solid var(--gold-line); border-radius: 15px; padding: 17px 18px; margin-bottom: 12px; box-shadow: var(--shadow); }
+  .pend-card .ph { display: flex; align-items: flex-start; gap: 13px; margin-bottom: 11px; }
+  .pend-card .ph h4 { font-family: 'Playfair Display'; font-size: 19px; font-weight: 600; }
+  .pend-card .ph .meta { font-size: 12px; color: var(--ink-soft); margin-top: 3px; }
+  .status-pill { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
+  .status-pill.pending { background: #FBF3DF; color: #8A6A2E; }
+  .status-pill.approved { background: #EAF3DE; color: var(--ok); }
+  .status-pill.rejected { background: #FDECEC; color: var(--danger); }
+  .type-pill { font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 6px; background: #FDE7DC; color: var(--accent); margin-left: 6px; }
+  .pend-card .pbio { font-size: 12.5px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 11px; }
+  .pend-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* ===== MODAL ===== */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(36,29,21,0.5); z-index: 60; padding: 0; overflow-y: auto; }
+  .overlay.open { display: block; }
+  .modal { background: var(--card); border-radius: 20px; width: 100%; max-width: 640px; margin: 24px auto; box-shadow: 0 20px 60px rgba(36,29,21,0.3); overflow: hidden; }
+  .modal-head { padding: 18px 22px; border-bottom: 1px solid var(--gold-line); display: flex; align-items: center; justify-content: space-between; }
+  .modal-head h3 { font-family: 'Playfair Display'; font-size: 20px; font-weight: 600; }
+  .modal-head .who-for { font-size: 12.5px; color: var(--gold); font-weight: 600; margin-top: 2px; }
+  .modal-body { padding: 20px 22px; }
+  .modal-foot { padding: 15px 22px; border-top: 1px solid var(--gold-line); display: flex; justify-content: space-between; gap: 10px; background: var(--bg-warm); flex-wrap: wrap; }
+  .fl { margin-bottom: 15px; }
+  .fl label { display: block; font-size: 12px; font-weight: 600; color: var(--ink-soft); margin-bottom: 7px; }
+  .fl input, .fl textarea, .fl select { width: 100%; padding: 11px 13px; border: 1.5px solid var(--line); border-radius: 11px; font-size: 14px; font-family: 'Poppins'; background: var(--bg-warm); color: var(--ink); }
+  .fl input:focus, .fl textarea:focus, .fl select:focus { outline: none; border-color: var(--gold); background: #fff; }
+  .fl textarea { min-height: 190px; resize: vertical; line-height: 1.7; font-size: 15px; }
+  .fl textarea.poem-area { font-family: 'Playfair Display'; }
+  .fl-row { display: flex; gap: 12px; } .fl-row .fl { flex: 1; }
+
+  .mk-bar { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+  .mk-btn { background: var(--bg-warm); border: 1px solid var(--line); border-radius: 8px; padding: 6px 11px; font-size: 12.5px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 5px; }
+  .mk-btn:hover { background: var(--gold-soft); border-color: var(--gold-soft); }
+  .mk-btn .ico { font-family: 'Playfair Display'; font-size: 15px; }
+  .mk-hint { font-size: 11px; color: var(--ink-soft); margin-bottom: 10px; line-height: 1.5; }
+
+  .dup-warn { display: none; background: #FBF3DF; border: 1px solid #E8D3A2; border-radius: 11px; padding: 12px 14px; font-size: 12.5px; color: #8A6A2E; line-height: 1.55; margin-bottom: 14px; }
+  .dup-warn.show { display: block; }
+  .dup-warn b { color: #6E521C; }
+
+  .img-up { display: flex; align-items: center; gap: 14px; }
+  .img-preview { width: 72px; height: 72px; border-radius: 14px; background: var(--gold-soft); flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; font-family: 'Playfair Display'; font-size: 28px; font-weight: 700; color: #6E521C; }
+  .img-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+  .toast { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--bg); padding: 12px 22px; border-radius: 12px; font-size: 13.5px; font-weight: 500; opacity: 0; pointer-events: none; transition: all .25s; z-index: 100; box-shadow: 0 8px 30px rgba(36,29,21,0.3); max-width: 90vw; text-align: center; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.err { background: var(--danger); color: #fff; } .toast.ok { background: var(--ok); color: #fff; }
+
+  .loader { text-align: center; padding: 44px; color: var(--ink-soft); }
+  .spin { display: inline-block; width: 22px; height: 22px; border: 2.5px solid var(--gold-line); border-top-color: var(--gold); border-radius: 50%; animation: sp 0.7s linear infinite; }
+  @keyframes sp { to { transform: rotate(360deg); } }
+
+  /* ===== MOBILE ===== */
+  @media (max-width: 780px) {
+    .pane-poets { width: 100%; }
+    .pane-main { display: none; width: 100%; }
+    body.detail-open .pane-poets { display: none; }
+    body.detail-open .pane-main { display: block; }
+    .back-btn { display: flex; }
+    .poet-hero .acts { flex-direction: row; }
+    .modal { margin: 0; border-radius: 0; min-height: 100vh; max-width: 100%; }
+    .log-time { width: 100px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="login">
+  <div class="login-card">
+    <h1 class="serif">Bulak</h1>
+    <p class="tag">Goşgular hazynasy — dolandyryş</p>
+    <div class="in-field">
+      <label>Ulanyjy ady</label>
+      <input id="lu" type="text" autocomplete="username">
+    </div>
+    <div class="in-field">
+      <label>Parol</label>
+      <div class="in-wrap">
+        <input id="lp" type="password" autocomplete="current-password">
+        <button class="eye-btn" onclick="togglePass()" id="eyeBtn" aria-label="Paroly görkez">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+    <button class="btn btn-gold full" onclick="doLogin()">Giriş</button>
+    <div id="loginErr"></div>
+    <div class="credit">by <b>mb.creativee</b></div>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app">
+  <div class="topbar">
+    <div class="brand"><h1 class="serif">Bulak</h1></div>
+    <div class="right">
+      <span class="whoami" id="whoami"></span>
+      <span class="role-chip" id="roleChip"></span>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Çykmak</button>
+    </div>
+  </div>
+
+  <div class="tabbar">
+    <button class="tab active" id="tabPoets" onclick="switchTab('poets')"><span>Şahyrlar</span></button>
+    <button class="tab" id="tabPending" onclick="switchTab('pending')"><span>Teklipler</span><span class="badge" id="pendBadge" style="display:none;">0</span></button>
+    <button class="tab" id="tabLog" onclick="switchTab('log')" style="display:none;"><span>Hereketler</span></button>
+  </div>
+
+  <div class="view active" id="viewPoets">
+    <div class="poets-wrap">
+      <div class="split">
+        <div class="pane-poets">
+          <input class="search-box" id="poetSearch" placeholder="Şahyr gözle..." oninput="renderPoets()">
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-outline btn-sm" style="flex:1;" onclick="openPoetEditor(null)">+ Täze şahyr</button>
+            <button class="btn btn-gold btn-sm" style="flex:1;" onclick="openPoemEditor(null)">+ Täze goşgy</button>
+          </div>
+          <div class="poet-list-scroll"><div id="poetList" style="margin-top:6px;"></div></div>
+        </div>
+        <div class="pane-main" id="poetMain">
+          <div class="welcome-pane" id="welcomePane"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="viewPending">
+    <div class="inner-wrap">
+      <div class="section-title serif" id="pendingTitle">Teklipler</div>
+      <div id="pendList"></div>
+    </div>
+  </div>
+
+  <div class="view" id="viewLog">
+    <div class="inner-wrap">
+      <div class="section-title serif">Editorlaryň soňky girişi</div>
+      <div class="sessions-grid" id="sessGrid"></div>
+      <div class="section-title serif">Hereketleriň taryhy</div>
+      <div class="card" style="padding: 6px 16px;" id="logList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== POEM EDITOR ===== -->
+<div class="overlay" id="poemOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3 id="poemModalTitle">Täze goşgy</h3>
+        <div class="who-for" id="poemForPoet"></div>
+      </div>
+      <button class="btn btn-ghost" onclick="closePoemEditor()" style="font-size:22px;line-height:1;">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="poetPickerWrap" class="fl" style="display:none;">
+        <label>Haýsy şahyra?</label>
+        <select id="poemPoetPick" onchange="onPoemPoetPick()"></select>
+      </div>
+      <div class="fl">
+        <label>Goşgynyň ady</label>
+        <input id="poemTitle" type="text" placeholder="Rubagy I">
+      </div>
+      <div class="fl">
+        <label>Epigraf (islege görä)</label>
+        <input id="poemEpigraph" type="text" placeholder="Goşgynyň öňündäki setir...">
+      </div>
+      <div class="fl">
+        <label>Goşgynyň teksti</label>
+        <div class="mk-bar">
+          <button class="mk-btn" onclick="applyMarkup('bold')"><span class="ico" style="font-weight:700;">B</span> Ýogyn</button>
+          <button class="mk-btn" onclick="applyMarkup('italic')"><span class="ico" style="font-style:italic;">I</span> Italik</button>
+          <button class="mk-btn" onclick="applyMarkup('quote')"><span class="ico">›</span> Sitata</button>
+          <button class="mk-btn" onclick="applyMarkup('stanza')"><span class="ico">✳</span> Bent aýyryjy</button>
+        </div>
+        <div class="mk-hint">Belläp, düwmä basyň. <b>**ýogyn**</b> · <i>*italik*</i> · setir başynda <b>&gt;</b> sitata · aýratyn setirde <b>***</b> bent aýyrýar</div>
+        <textarea id="poemText" class="poem-area" placeholder="Goşgynyň setirlerini şu ýere ýazyň..."></textarea>
+      </div>
+      <div class="dup-warn" id="dupWarn"></div>
+    </div>
+    <div class="modal-foot">
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-gold" onclick="savePoem()" id="savePoemBtn">Ýatda sakla</button>
+        <button class="btn btn-outline" onclick="closePoemEditor()">Ýatyr</button>
+      </div>
+      <button class="btn btn-danger" id="delPoemBtn" onclick="deletePoem()" style="display:none;">Poz</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== POET EDITOR ===== -->
+<div class="overlay" id="poetOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="poetModalTitle">Täze şahyr</h3>
+      <button class="btn btn-ghost" onclick="closePoetEditor()" style="font-size:22px;line-height:1;">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="fl">
+        <label>Şahyryň suraty</label>
+        <div class="img-up">
+          <div class="img-preview" id="poetImgPreview"><span>?</span></div>
+          <div>
+            <input type="file" id="poetImgFile" accept="image/*" style="display:none;" onchange="onImagePicked(event)">
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('poetImgFile').click()">Surat saýla</button>
+            <div style="font-size:11px;color:var(--ink-soft);margin-top:6px;">JPG ýa PNG</div>
+          </div>
+        </div>
+      </div>
+      <div class="fl"><label>Doly ady</label><input id="poetName" type="text" placeholder="Magtymguly Pyragy"></div>
+      <div class="fl-row">
+        <div class="fl"><label>Ýaşan ýyllary</label><input id="poetYears" type="text" placeholder="1724 – 1807"></div>
+        <div class="fl"><label>Döwri</label><select id="poetCategory"><option value="XVIII_XIX">XVIII–XIX asyr</option><option value="XX_XXI">XX–XXI asyr</option></select></div>
+      </div>
+      <div class="fl"><label>Terjimehaly</label><textarea id="poetBio" placeholder="Şahyr barada gysgaça..." style="min-height:120px;"></textarea></div>
+      <div id="proposeNote" style="display:none;background:#FBF3DF;border-radius:11px;padding:12px 14px;font-size:12.5px;color:#8A6A2E;line-height:1.5;">Siz editor bolanyňyz üçin, bu täze şahyr adminiň tassyklamasyna iberiler. Tassyklansa goşular we size habar berler.</div>
+    </div>
+    <div class="modal-foot">
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-gold" id="savePoetBtn" onclick="savePoet()">Ýatda sakla</button>
+        <button class="btn btn-outline" onclick="closePoetEditor()">Ýatyr</button>
+      </div>
+      <button class="btn btn-danger" id="delPoetBtn" onclick="deletePoet()" style="display:none;">Şahyry poz</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'https://functions.yandexcloud.net/d4eo3o1jdsg8ed74gccl';
+let auth=null, me=null, poets=[], curPoetId=null, curPoems=[], editingPoemId=null, editingPoetId=null, pickedImagePath=null, poemSort='old';
+
+function b64(s){ return btoa(unescape(encodeURIComponent(s))); }
+async function api(query, method, body){
+  const opts={ method:method||'GET', headers:{} };
+  if(auth) opts.headers['X-Api-Auth']=auth;
+  if(body){ opts.headers['Content-Type']='application/json'; opts.body=JSON.stringify(body); }
+  const res=await fetch(API+query, opts);
+  let data; try{ data=await res.json(); }catch(e){ data={}; }
+  if(!res.ok) throw new Error(data.error||'Näsazlyk');
+  return data;
+}
+function toast(msg, kind){ const t=document.getElementById('toast'); t.textContent=msg; t.className='toast show'+(kind?' '+kind:''); setTimeout(()=>{t.className='toast';},3200); }
+function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+function initial(n){ return (n||'?').trim().charAt(0).toUpperCase(); }
+function stripMk(s){ return (s||'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/^>\s?/gm,'').replace(/^\*\*\*$/gm,'·'); }
+
+// ----- surat cache -----
+const imgCache={};
+async function loadImageUrl(imagePath, elId){
+  if(!imagePath) return;
+  const c=imgCache[imagePath];
+  if(c && c!=='fail' && c!=='pending'){ setImg(elId,c); return; }
+  if(c==='pending') return;
+  imgCache[imagePath]='pending';
+  try{ const r=await api('?action=imageUrl&imagePath='+encodeURIComponent(imagePath)); imgCache[imagePath]=r.url; setImg(elId,r.url); }
+  catch(e){ imgCache[imagePath]='fail'; }
+}
+function setImg(elId,url){ const el=document.getElementById(elId); if(el&&url) el.innerHTML='<img src="'+url+'">'; }
+
+// ----- LOGIN -----
+function togglePass(){
+  const inp=document.getElementById('lp');
+  inp.type = inp.type==='password' ? 'text' : 'password';
+}
+async function doLogin(){
+  const u=document.getElementById('lu').value.trim();
+  const p=document.getElementById('lp').value;
+  const err=document.getElementById('loginErr'); err.textContent='';
+  if(!u||!p){ err.textContent='Ulanyjy ady we paroly ýazyň'; return; }
+  auth=b64(u+':'+p);
+  try{
+    me=await api('?action=me');
+    poets=await api('?action=poets');
+    document.getElementById('whoami').textContent=me.username;
+    const chip=document.getElementById('roleChip');
+    chip.textContent=me.role==='admin'?'Admin':'Editor';
+    chip.className='role-chip'+(me.role==='admin'?' admin':'');
+    document.getElementById('login').style.display='none';
+    document.getElementById('app').style.display='block';
+    if(me.role==='admin') document.getElementById('tabLog').style.display='flex';
+    renderPoets(); renderWelcome(); loadPending();
+  }catch(e){ auth=null; err.textContent=e.message; }
+}
+function doLogout(){ auth=null; me=null; curPoetId=null; document.body.classList.remove('detail-open'); document.getElementById('lp').value=''; document.getElementById('app').style.display='none'; document.getElementById('login').style.display='flex'; }
+
+// ----- TABS -----
+function switchTab(name){
+  ['poets','pending','log'].forEach(t=>{
+    document.getElementById('view'+cap(t)).classList.toggle('active', t===name);
+    document.getElementById('tab'+cap(t)).classList.toggle('active', t===name);
+  });
+  if(name==='log') loadLog();
+  if(name==='pending') loadPending();
+}
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+// ----- POETS -----
+function renderPoets(){
+  const q=document.getElementById('poetSearch').value.trim().toLowerCase();
+  const filt=poets.filter(p=>p.fullName.toLowerCase().includes(q));
+  const eras={}; filt.forEach(p=>{ const e=p.category||'Başga'; (eras[e]=eras[e]||[]).push(p); });
+  const names={'XVIII_XIX':'XVIII–XIX asyr','XX_XXI':'XX–XXI asyr'};
+  let html='';
+  Object.keys(eras).sort().forEach(era=>{
+    html+='<div class="era-h">'+(names[era]||era)+'</div>';
+    eras[era].sort((a,b)=>a.sortOrder-b.sortOrder).forEach(p=>{
+      html+='<div class="poet-row'+(p.id===curPoetId?' sel':'')+'" onclick="selectPoet(\''+p.id+'\')">'+
+        '<div class="poet-av" id="av-'+p.id+'"><span>'+initial(p.fullName)+'</span></div>'+
+        '<span class="pn">'+esc(p.fullName)+'</span><span class="pc">'+p.poemCount+'</span></div>';
+    });
+  });
+  document.getElementById('poetList').innerHTML=html||'<p style="color:var(--ink-soft);font-size:13px;padding:10px;">Tapylmady</p>';
+  filt.forEach(p=>{ if(p.imagePath) loadImageUrl(p.imagePath,'av-'+p.id); });
+}
+
+async function selectPoet(id){
+  curPoetId=id; renderPoets();
+  document.body.classList.add('detail-open');
+  const poet=poets.find(p=>p.id===id);
+  const main=document.getElementById('poetMain');
+  main.innerHTML='<div class="loader"><div class="spin"></div></div>';
+  try{ curPoems=await api('?action=poems&poetId='+encodeURIComponent(id)); renderPoetMain(poet); }
+  catch(e){ main.innerHTML='<div class="hint">Ýalňyşlyk: '+esc(e.message)+'</div>'; }
+}
+
+function renderPoetMain(poet){
+  const canDelPoet = me.role==='admin';
+  const editorDel = me.role!=='admin';
+  let html='<button class="back-btn" onclick="backToList()">‹ Şahyrlar</button>';
+  html+='<div class="card poet-hero">'+
+    '<div class="big-av" id="heroAv">'+initial(poet.fullName)+'</div>'+
+    '<div style="flex:1;min-width:0;">'+
+      '<h2 class="serif">'+esc(poet.fullName)+'</h2>'+
+      '<div class="yrs">'+esc(poet.lifeYears||'')+'</div>'+
+      '<div class="bio">'+esc(poet.bio||'')+'</div>'+
+    '</div>'+
+    '<div class="acts">'+
+      '<button class="btn btn-outline btn-sm" onclick="openPoetEditor(\''+poet.id+'\')">Üýtget</button>'+
+      '<button class="btn btn-danger btn-sm" onclick="deletePoetById(\''+poet.id+'\')">'+(canDelPoet?'Poz':'Poz teklip')+'</button>'+
+    '</div></div>';
+  html+='<div class="list-head"><h3>Goşgular · '+curPoems.length+'</h3>'+
+    '<div class="tools">'+
+      '<select class="sort-sel" onchange="changeSort(this.value)">'+
+        '<option value="old"'+(poemSort==='old'?' selected':'')+'>Köneden täzä</option>'+
+        '<option value="new"'+(poemSort==='new'?' selected':'')+'>Täzeden könä</option>'+
+      '</select>'+
+      '<button class="btn btn-gold btn-sm" onclick="openPoemEditor(null)">+ Täze goşgy</button>'+
+    '</div></div>';
+  if(curPoems.length===0){ html+='<div class="hint">Entek goşgy ýok</div>'; }
+  else{
+    const sorted=curPoems.slice().sort((a,b)=> poemSort==='old' ? (a.sortOrder||0)-(b.sortOrder||0) : (b.sortOrder||0)-(a.sortOrder||0));
+    sorted.forEach(pm=>{
+      html+='<div class="poem-item" onclick="openPoemEditor(\''+pm.id+'\')">'+
+        '<div class="pt">'+esc(stripMk(pm.title))+'</div>'+
+        '<div class="pe">'+esc(stripMk(pm.text).slice(0,130))+'</div></div>';
+    });
+  }
+  document.getElementById('poetMain').innerHTML=html;
+  if(poet.imagePath) loadImageUrl(poet.imagePath,'heroAv');
+}
+function backToList(){ document.body.classList.remove('detail-open'); curPoetId=null; renderPoets(); renderWelcome(); }
+
+function renderWelcome(){
+  const el=document.getElementById('welcomePane');
+  if(!el) return;
+  const totalPoets=poets.length;
+  const totalPoems=poets.reduce((s,p)=>s+(p.poemCount||0),0);
+  const eras=new Set(poets.map(p=>p.category)).size;
+  el.innerHTML='<div class="welcome-card">'+
+    '<h2 class="serif">Hoş geldiň, '+esc(me.username)+'</h2>'+
+    '<p>Çep tarapdan şahyr saýlap, goşgularyny dolandyryp bilersiň. Ýa-da täze şahyr goşup başla.</p>'+
+    '<div class="stat-row">'+
+      '<div class="stat-box"><div class="num">'+totalPoets+'</div><div class="lbl">şahyr</div></div>'+
+      '<div class="stat-box"><div class="num">'+totalPoems.toLocaleString()+'</div><div class="lbl">goşgy</div></div>'+
+      '<div class="stat-box"><div class="num">'+eras+'</div><div class="lbl">döwür</div></div>'+
+    '</div>'+
+    '<div class="welcome-actions">'+
+      '<button class="btn btn-gold" onclick="openPoetEditor(null)">+ Täze şahyr</button>'+
+      '<button class="btn btn-outline" onclick="openPoemEditor(null)">+ Täze goşgy</button>'+
+    '</div></div>';
+}
+function changeSort(v){ poemSort=v; const poet=poets.find(p=>p.id===curPoetId); if(poet) renderPoetMain(poet); }
+
+// ----- POEM EDITOR -----
+function openPoemEditor(poemId){
+  editingPoemId=poemId;
+  document.getElementById('dupWarn').className='dup-warn';
+  const pickerWrap=document.getElementById('poetPickerWrap');
+  const forPoet=document.getElementById('poemForPoet');
+  const del=document.getElementById('delPoemBtn');
+
+  if(curPoetId){
+    // şahyr sahypasyndan açyldy → awtor awtomatik
+    pickerWrap.style.display='none';
+    const poet=poets.find(p=>p.id===curPoetId);
+    forPoet.textContent = poet ? poet.fullName : '';
+    forPoet.style.display='block';
+  } else {
+    // esasy menýudan → şahyr saýlatmaly
+    pickerWrap.style.display='block';
+    forPoet.style.display='none';
+    fillPoetPicker();
+  }
+
+  if(poemId){
+    const pm=curPoems.find(p=>p.id===poemId);
+    document.getElementById('poemModalTitle').textContent='Goşgyny üýtgetmek';
+    document.getElementById('poemTitle').value=pm.title||'';
+    document.getElementById('poemEpigraph').value=pm.epigraph||'';
+    document.getElementById('poemText').value=pm.text||'';
+    del.style.display='inline-block';
+  } else {
+    document.getElementById('poemModalTitle').textContent='Täze goşgy';
+    document.getElementById('poemTitle').value='';
+    document.getElementById('poemEpigraph').value='';
+    document.getElementById('poemText').value='';
+    del.style.display='none';
+  }
+  document.getElementById('poemOverlay').classList.add('open');
+}
+function fillPoetPicker(){
+  const sel=document.getElementById('poemPoetPick');
+  const sorted=poets.slice().sort((a,b)=>a.fullName.localeCompare(b.fullName));
+  sel.innerHTML='<option value="">— Şahyr saýlaň —</option>'+sorted.map(p=>'<option value="'+p.id+'">'+esc(p.fullName)+'</option>').join('');
+}
+async function onPoemPoetPick(){
+  const id=document.getElementById('poemPoetPick').value;
+  if(id){ curPoetId=id; curPoems=await api('?action=poems&poetId='+encodeURIComponent(id)); }
+}
+function closePoemEditor(){ document.getElementById('poemOverlay').classList.remove('open'); }
+
+function applyMarkup(kind){
+  const ta=document.getElementById('poemText');
+  const s=ta.selectionStart, e=ta.selectionEnd, val=ta.value, sel=val.slice(s,e);
+  let out, off=0;
+  if(kind==='bold'){ out='**'+(sel||'tekst')+'**'; off=2; }
+  else if(kind==='italic'){ out='*'+(sel||'tekst')+'*'; off=1; }
+  else if(kind==='quote'){ const ls=val.lastIndexOf('\n',s-1)+1; ta.value=val.slice(0,ls)+'> '+val.slice(ls); ta.focus(); return; }
+  else if(kind==='stanza'){ out=(val[s-1]==='\n'||s===0?'':'\n')+'***\n'; ta.value=val.slice(0,s)+out+val.slice(e); ta.focus(); ta.selectionStart=ta.selectionEnd=s+out.length; return; }
+  ta.value=val.slice(0,s)+out+val.slice(e); ta.focus();
+  if(sel){ ta.selectionStart=s; ta.selectionEnd=s+out.length; } else { ta.selectionStart=ta.selectionEnd=s+off; }
+}
+
+async function savePoem(){
+  const title=document.getElementById('poemTitle').value.trim();
+  const text=document.getElementById('poemText').value.trim();
+  const epigraph=document.getElementById('poemEpigraph').value.trim();
+  if(!curPoetId){ toast('Şahyr saýlaň', 'err'); return; }
+  if(!title||!text){ toast('Ady we teksti ýazyň','err'); return; }
+
+  // gaýtalanma barlagy
+  const btn=document.getElementById('savePoemBtn');
+  btn.disabled=true;
+  try{
+    const chk=await api('?action=checkDuplicate','POST',{ text, poemId: editingPoemId });
+    if(chk.duplicates && chk.duplicates.length){
+      const w=document.getElementById('dupWarn');
+      const list=chk.duplicates.map(d=>'«'+esc(d.title)+'» — '+esc(d.poetName)).join(', ');
+      w.innerHTML='<b>Üns beriň:</b> meňzeş goşgy bazada eýýäm bar: '+list+'.<br>Şonda-da saklajak bolsaňyz, ýene bir gezek «Ýatda sakla» basyň.';
+      w.className='dup-warn show';
+      btn.disabled=false;
+      btn.dataset.confirmed = btn.dataset.confirmed==='1' ? '1' : 'pending';
+      if(btn.dataset.confirmed!=='1'){ btn.dataset.confirmed='1'; return; }
+    }
+  }catch(e){}
+  btn.dataset.confirmed='';
+
+  try{
+    if(editingPoemId){
+      await api('?action=poem','PUT',{ poetId:curPoetId, poemId:editingPoemId, title, text, epigraph });
+      toast('Üýtgedildi','ok');
+    } else {
+      await api('?action=poem','POST',{ poetId:curPoetId, title, text, epigraph });
+      toast('Goşuldy','ok');
+    }
+    closePoemEditor();
+    poets=await api('?action=poets');
+    await selectPoet(curPoetId);
+    renderPoets();
+  }catch(e){ toast(e.message,'err'); }
+  finally{ btn.disabled=false; }
+}
+
+async function deletePoem(){
+  if(!editingPoemId) return;
+  if(!confirm('Bu goşgyny pozmak?')) return;
+  try{
+    await api('?action=poem','DELETE',{ poetId:curPoetId, poemId:editingPoemId });
+    toast('Pozuldy','ok'); closePoemEditor();
+    poets=await api('?action=poets'); await selectPoet(curPoetId); renderPoets();
+  }catch(e){ toast(e.message,'err'); }
+}
+
+// ----- POET EDITOR -----
+function openPoetEditor(poetId){
+  editingPoetId=poetId; pickedImagePath=null;
+  const isNew=!poetId, isEditor=me.role!=='admin';
+  document.getElementById('poetModalTitle').textContent=isNew?'Täze şahyr':'Şahyry üýtgetmek';
+  document.getElementById('proposeNote').style.display=(isNew&&isEditor)?'block':'none';
+  document.getElementById('delPoetBtn').style.display=(!isNew&&me.role==='admin')?'inline-block':'none';
+  document.getElementById('savePoetBtn').textContent=(isNew&&isEditor)?'Tassyklamaga iber':'Ýatda sakla';
+  const prev=document.getElementById('poetImgPreview');
+  if(poetId){
+    const p=poets.find(x=>x.id===poetId);
+    document.getElementById('poetName').value=p.fullName||'';
+    document.getElementById('poetYears').value=p.lifeYears||'';
+    document.getElementById('poetCategory').value=p.category||'XX_XXI';
+    document.getElementById('poetBio').value=p.bio||'';
+    prev.innerHTML='<span>'+initial(p.fullName)+'</span>';
+    if(p.imagePath) loadImageUrl(p.imagePath,'poetImgPreview');
+  } else {
+    document.getElementById('poetName').value='';
+    document.getElementById('poetYears').value='';
+    document.getElementById('poetCategory').value='XX_XXI';
+    document.getElementById('poetBio').value='';
+    prev.innerHTML='<span>?</span>';
+  }
+  document.getElementById('poetOverlay').classList.add('open');
+}
+function closePoetEditor(){ document.getElementById('poetOverlay').classList.remove('open'); }
+
+async function onImagePicked(ev){
+  const file=ev.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=async()=>{
+    document.getElementById('poetImgPreview').innerHTML='<img src="'+reader.result+'">';
+    const base64=reader.result.split(',')[1];
+    toast('Surat ýüklenýär...');
+    try{ const r=await api('?action=image','POST',{ filename:file.name, dataBase64:base64 }); pickedImagePath=r.imagePath; toast('Surat ýüklendi','ok'); }
+    catch(e){ toast('Surat ýüklenmedi: '+e.message,'err'); }
+  };
+  reader.readAsDataURL(file);
+}
+
+async function savePoet(){
+  const fullName=document.getElementById('poetName').value.trim();
+  const lifeYears=document.getElementById('poetYears').value.trim();
+  const category=document.getElementById('poetCategory').value;
+  const bio=document.getElementById('poetBio').value.trim();
+  if(!fullName){ toast('Şahyryň adyny ýazyň','err'); return; }
+  const payload={ fullName, lifeYears, category, bio };
+  if(pickedImagePath) payload.imagePath=pickedImagePath;
+  try{
+    if(editingPoetId){
+      payload.id=editingPoetId;
+      await api('?action=poet','PUT',payload); toast('Üýtgedildi','ok');
+    } else if(me.role==='admin'){
+      await api('?action=poet','POST',payload); toast('Şahyr goşuldy','ok');
+    } else {
+      await api('?action=proposePoet','POST',payload); toast('Tassyklamaga iberildi','ok');
+    }
+    closePoetEditor();
+    if(me.role==='admin'||editingPoetId){ poets=await api('?action=poets'); renderPoets(); if(curPoetId) selectPoet(curPoetId); }
+    loadPending();
+  }catch(e){ toast(e.message,'err'); }
+}
+
+function deletePoet(){ deletePoetById(editingPoetId); }
+async function deletePoetById(id){
+  if(!id) return;
+  const p=poets.find(x=>x.id===id);
+  const isAdmin=me.role==='admin';
+  const msg=isAdmin ? '«'+(p?p.fullName:id)+'» şahyry we ähli goşgulary pozulsynmy?' : '«'+(p?p.fullName:id)+'» şahyry pozmak üçin admine teklip iberilsinmi?';
+  if(!confirm(msg)) return;
+  try{
+    const r=await api('?action=poet','DELETE',{ id });
+    if(r.deleted){
+      toast('Şahyr pozuldy','ok');
+      poets=poets.filter(x=>x.id!==id);
+      if(curPoetId===id){ curPoetId=null; document.body.classList.remove('detail-open'); }
+      closePoetEditor(); renderPoets();
+    } else {
+      toast('Pozma teklibi admine iberildi','ok');
+      closePoetEditor(); loadPending();
+    }
+  }catch(e){ toast(e.message,'err'); }
+}
+
+// ----- PENDING -----
+async function loadPending(){
+  try{
+    const items=await api('?action=pending');
+    const pc=items.filter(i=>i.status==='pending').length;
+    const badge=document.getElementById('pendBadge');
+    if(me.role==='admin'&&pc>0){ badge.style.display='inline-block'; badge.textContent=pc; } else badge.style.display='none';
+    renderPending(items);
+  }catch(e){}
+}
+function renderPending(items){
+  document.getElementById('pendingTitle').textContent=me.role==='admin'?'Tassyklamaga garaşýan teklipler':'Meniň tekliplerim';
+  if(!items.length){ document.getElementById('pendList').innerHTML='<div class="hint">'+(me.role==='admin'?'Garaşýan teklip ýok':'Siz entek teklip ibermediňiz')+'</div>'; return; }
+  const sn={pending:'Garaşýar',approved:'Tassyklandy',rejected:'Ret edildi'};
+  let html='';
+  items.forEach(it=>{
+    const isDelete = it.type==='delete';
+    html+='<div class="pend-card"><div class="ph">'+
+      '<div class="poet-av" style="width:48px;height:48px;font-size:20px;border-radius:12px;">'+initial(it.fullName)+'</div>'+
+      '<div style="flex:1;"><h4 class="serif">'+esc(it.fullName)+(isDelete?'<span class="type-pill">POZMAK</span>':'')+'</h4>'+
+      '<div class="meta">'+(it.lifeYears?esc(it.lifeYears)+' · ':'')+esc(it.proposedBy)+(isDelete?' pozmak isleýär':' teklip etdi')+'</div></div>'+
+      '<span class="status-pill '+it.status+'">'+sn[it.status]+'</span></div>';
+    if(!isDelete && it.bio) html+='<div class="pbio">'+esc(it.bio.slice(0,200))+'</div>';
+    if(it.status==='rejected'&&it.reason) html+='<div class="pbio" style="color:var(--danger);">Sebäbi: '+esc(it.reason)+'</div>';
+    html+='<div class="pend-actions">';
+    if(me.role==='admin'&&it.status==='pending'){
+      html+='<button class="btn btn-ok btn-sm" onclick="reviewPoet(\''+it.proposalId+'\',true,'+isDelete+')">Tassykla</button>'+
+            '<button class="btn btn-danger btn-sm" onclick="reviewPoet(\''+it.proposalId+'\',false,'+isDelete+')">Ret et</button>';
+    } else if(me.role!=='admin'&&it.status!=='pending'){
+      html+='<button class="btn btn-outline btn-sm" onclick="dismissProposal(\''+it.proposalId+'\')">Okaldy, aýyr</button>';
+    }
+    html+='</div></div>';
+  });
+  document.getElementById('pendList').innerHTML=html;
+}
+async function reviewPoet(proposalId, approve, isDelete){
+  let reason='';
+  if(!approve){ reason=prompt('Ret ediş sebäbi (islege görä):')||''; }
+  else { if(!confirm(isDelete?'Bu şahyry pozmagy tassyklamak?':'Bu şahyry tassyklap, hazyna goşmak?')) return; }
+  try{
+    await api('?action=reviewPoet','POST',{ proposalId, approve, reason });
+    toast(approve?(isDelete?'Şahyr pozuldy':'Tassyklandy we goşuldy'):'Ret edildi','ok');
+    poets=await api('?action=poets'); renderPoets(); loadPending();
+    if(curPoetId && !poets.find(p=>p.id===curPoetId)){ curPoetId=null; document.body.classList.remove('detail-open'); }
+  }catch(e){ toast(e.message,'err'); }
+}
+async function dismissProposal(proposalId){ try{ await api('?action=dismissProposal','POST',{ proposalId }); loadPending(); }catch(e){ toast(e.message,'err'); } }
+
+// ----- LOG -----
+async function loadLog(){
+  const grid=document.getElementById('sessGrid'), list=document.getElementById('logList');
+  grid.innerHTML='<div class="loader"><div class="spin"></div></div>';
+  try{
+    const data=await api('?action=log');
+    let sh='';
+    Object.keys(data.sessions||{}).forEach(u=>{ sh+='<div class="sess-card"><div class="su"><span class="dot"></span><span class="un">'+esc(u)+'</span></div><div class="st">Soňky giriş: '+fmtTime(data.sessions[u])+'</div></div>'; });
+    grid.innerHTML=sh||'<div class="hint">Maglumat ýok</div>';
+    let lh='';
+    (data.entries||[]).forEach(e=>{ lh+='<div class="log-line"><span class="log-time">'+fmtTime(e.time)+'</span><span class="log-user">'+esc(e.user)+'</span><span class="log-act"><span class="a">'+esc(e.action)+'</span> <span class="d">'+esc(e.detail)+'</span></span></div>'; });
+    list.innerHTML=lh||'<div class="hint">Hereket ýok</div>';
+  }catch(e){ grid.innerHTML='<div class="hint">'+esc(e.message)+'</div>'; }
+}
+function fmtTime(iso){ if(!iso) return '—'; const d=new Date(iso); const p=n=>String(n).padStart(2,'0'); return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
+
+document.getElementById('lp').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+</script>
+</body>
+</html>
