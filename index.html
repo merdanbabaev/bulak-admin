@@ -370,7 +370,12 @@ async function api(query, method, body){
   if(body){ opts.headers['Content-Type']='application/json'; opts.body=JSON.stringify(body); }
   const res=await fetch(API+query, opts);
   let data; try{ data=await res.json(); }catch(e){ data={}; }
-  if(!res.ok) throw new Error(data.error||'Näsazlyk');
+  if(!res.ok){
+    const err=new Error(data.error||'Näsazlyk');
+    if(data.blockedMinutes!=null) err.blockedMinutes=data.blockedMinutes;
+    if(data.attemptsLeft!=null) err.attemptsLeft=data.attemptsLeft;
+    throw err;
+  }
   return data;
 }
 function toast(msg, kind){ const t=document.getElementById('toast'); t.textContent=msg; t.className='toast show'+(kind?' '+kind:''); setTimeout(()=>{t.className='toast';},3200); }
@@ -413,7 +418,19 @@ async function doLogin(){
     document.getElementById('app').style.display='block';
     if(me.role==='admin') document.getElementById('tabLog').style.display='flex';
     renderPoets(); renderWelcome(); loadPending();
-  }catch(e){ auth=null; err.textContent=e.message; }
+  }catch(e){
+    auth=null;
+    // blok ýa-da synanyşyk habary
+    if(e.blockedMinutes){
+      const h=Math.floor(e.blockedMinutes/60), m=e.blockedMinutes%60;
+      const t = h>0 ? (h+' sagat'+(m>0?' '+m+' minut':'')) : (m+' minut');
+      err.innerHTML='🔒 Köp ýalňyş synanyşyk. <b>'+t+'</b> soň täzeden synanyşyň.';
+    } else if(e.attemptsLeft!=null){
+      err.innerHTML=e.message+' <span style="opacity:.8;">('+e.attemptsLeft+' synanyşyk galdy)</span>';
+    } else {
+      err.textContent=e.message;
+    }
+  }
 }
 function doLogout(){ auth=null; me=null; curPoetId=null; document.body.classList.remove('detail-open'); document.getElementById('lp').value=''; document.getElementById('app').style.display='none'; document.getElementById('login').style.display='flex'; }
 
