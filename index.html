@@ -187,6 +187,27 @@
   .toast.err { background: var(--danger); color: #fff; } .toast.ok { background: var(--ok); color: #fff; }
 
   .loader { text-align: center; padding: 44px; color: var(--ink-soft); }
+
+  /* Dashboard bar - hemişe ýokarda */
+  .dash-bar {
+    max-width: 1120px; margin: 0 auto; padding: 14px 16px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .dash-stats { display: flex; gap: 8px; flex: 1; min-width: 0; }
+  .dash-stat {
+    background: var(--card); border: 1px solid var(--gold-line); border-radius: 11px;
+    padding: 8px 14px; display: flex; align-items: baseline; gap: 7px;
+  }
+  .dash-stat .dn { font-family: 'Playfair Display'; font-size: 20px; font-weight: 700; color: var(--gold); }
+  .dash-stat .dl { font-size: 11.5px; color: var(--ink-soft); }
+  .dash-pub { font-size: 11.5px; color: var(--ink-soft); text-align: right; line-height: 1.4; }
+  .dash-pub b { color: var(--ok); font-weight: 600; }
+  .dash-pub .stale { color: var(--accent); }
+  .btn-publish { background: var(--ok); color: #fff; border-radius: 10px; font-weight: 600; font-size: 13px; padding: 9px 16px; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+  .btn-publish:hover { opacity: .9; }
+  .btn-publish:active { transform: scale(.97); }
+  .btn-publish:disabled { background: var(--line); color: var(--ink-soft); cursor: default; opacity: .7; }
+  .btn-publish:disabled:hover { opacity: .7; }
   .spin { display: inline-block; width: 22px; height: 22px; border: 2.5px solid var(--gold-line); border-top-color: var(--gold); border-radius: 50%; animation: sp 0.7s linear infinite; }
   @keyframes sp { to { transform: rotate(360deg); } }
 
@@ -247,6 +268,8 @@
   </div>
 
   <div class="view active" id="viewPoets">
+    <!-- Hemişe görünýän dashboard -->
+    <div id="dashBar" class="dash-bar"></div>
     <div class="poets-wrap">
       <div class="split">
         <div class="pane-poets">
@@ -258,7 +281,7 @@
           <div class="poet-list-scroll"><div id="poetList" style="margin-top:6px;"></div></div>
         </div>
         <div class="pane-main" id="poetMain">
-          <div class="welcome-pane" id="welcomePane"></div>
+          <div class="hint">Şahyr saýlaň</div>
         </div>
       </div>
     </div>
@@ -579,42 +602,55 @@ function renderPoetMain(poet){
 }
 function goHome(){
   curPoetId=null;
-  document.body.classList.add('detail-open'); // mobilde pane-main görünsün
+  document.body.classList.remove('detail-open');
   renderPoets();
-  document.getElementById('poetMain').innerHTML='<div class="welcome-pane" id="welcomePane"></div>';
-  renderWelcome();
+  document.getElementById('poetMain').innerHTML='<div class="hint">Şahyr saýlaň</div>';
 }
 
 function backToList(){ document.body.classList.remove('detail-open'); curPoetId=null; renderPoets(); }
 
-function renderWelcome(){
-  const el=document.getElementById('welcomePane');
-  if(!el) return;
+let hasChanges = false; // üýtgeşme barmy (neşir edilmedik)
+
+function renderDashboard(){
+  const el=document.getElementById('dashBar');
+  if(!el || !me) return;
   const totalPoets=poets.length;
   const totalPoems=poets.reduce((s,p)=>s+(p.poemCount||0),0);
-  const eras=new Set(poets.map(p=>p.category)).size;
-  let pubInfo = '';
-  if(lastPublished) pubInfo='<div style="font-size:12px;color:var(--ink-soft);margin-top:12px;">Soňky neşir: '+fmtTime(lastPublished)+(catalogVersion?' · v'+catalogVersion:'')+'</div>';
-  let actions = '<button class="btn btn-gold" onclick="openPoetEditor(null)">+ Täze şahyr</button>'+
-    '<button class="btn btn-outline" onclick="openPoemEditor(null)">+ Täze goşgy</button>';
-  if(me.role==='admin'){
-    if(needsMigration){
-      actions+='<button class="btn btn-ok" onclick="doMigrate()" style="background:#2563EB;">⚡ Migrasiýa</button>';
+
+  // Üýtgeşme barmy barlamak (meta updated_at > lastPublished)
+  const canPublish = me.role==='admin';
+  const needsPublish = hasChanges;
+
+  let pubHtml = '';
+  if(canPublish){
+    if(lastPublished){
+      pubHtml = needsPublish
+        ? '<div class="dash-pub"><span class="stale">Neşir edilmedik üýtgeşmeler bar</span><br>Soňky: '+fmtTime(lastPublished)+'</div>'
+        : '<div class="dash-pub"><b>✓ Güncel</b><br>Soňky: '+fmtTime(lastPublished)+'</div>';
     }
-    actions+='<button class="btn btn-ok" onclick="doPublish()">📤 Neşir et</button>';
   }
-  el.innerHTML='<button class="back-btn" onclick="backToList()">‹ Şahyrlar</button>'+
-    '<div class="welcome-card">'+
-    '<h2 class="serif">Hoş geldiň, '+esc(me.username)+'</h2>'+
-    '<p>Çep tarapdan şahyr saýlap, goşgularyny dolandyryp bilersiň. Ýa-da täze şahyr goşup başla.</p>'+
-    '<div class="stat-row">'+
-      '<div class="stat-box"><div class="num">'+totalPoets+'</div><div class="lbl">şahyr</div></div>'+
-      '<div class="stat-box"><div class="num">'+totalPoems.toLocaleString()+'</div><div class="lbl">goşgy</div></div>'+
-      '<div class="stat-box"><div class="num">'+eras+'</div><div class="lbl">döwür</div></div>'+
+
+  let migrateBtn = '';
+  if(canPublish && needsMigration){
+    migrateBtn = '<button class="btn btn-sm" onclick="doMigrate()" style="background:#2563EB;color:#fff;">⚡ Migrasiýa</button>';
+  }
+
+  let publishBtn = '';
+  if(canPublish && !needsMigration){
+    publishBtn = '<button class="btn-publish" onclick="doPublish()"'+(needsPublish?'':' disabled')+'>📤 Neşir et</button>';
+  }
+
+  el.innerHTML =
+    '<div class="dash-stats">'+
+      '<div class="dash-stat"><span class="dn">'+totalPoets+'</span><span class="dl">şahyr</span></div>'+
+      '<div class="dash-stat"><span class="dn">'+totalPoems.toLocaleString()+'</span><span class="dl">goşgy</span></div>'+
     '</div>'+
-    '<div class="welcome-actions">'+actions+'</div>'+
-    pubInfo+'</div>';
+    pubHtml + migrateBtn + publishBtn;
 }
+
+function markChanged(){ hasChanges=true; renderDashboard(); }
+
+function renderWelcome(){ renderDashboard(); }
 
 async function doMigrate(){
   if(!confirm('catalog.json-y kiçi faýllara bölmek? (bir gezeklik, yzyna gaýdyp bolmaýar)')) return;
@@ -635,7 +671,8 @@ async function doPublish(){
     toast('Neşir edildi! v'+r.version,'ok');
     catalogVersion=r.version;
     lastPublished=new Date().toISOString();
-    renderWelcome();
+    hasChanges=false;
+    renderDashboard();
   }catch(e){ toast(e.message,'err'); }
 }
 function changeSort(v){ poemSort=v; const poet=poets.find(p=>p.id===curPoetId); if(poet) renderPoetMain(poet); }
@@ -727,10 +764,10 @@ async function savePoem(){
   try{
     if(editingPoemId){
       await api('?action=poem','PUT',{ poetId:curPoetId, poemId:editingPoemId, title, text, epigraph });
-      toast('Üýtgedildi','ok');
+      toast('Üýtgedildi','ok'); markChanged();
     } else {
       await api('?action=poem','POST',{ poetId:curPoetId, title, text, epigraph });
-      toast('Goşuldy','ok');
+      toast('Goşuldy','ok'); markChanged();
     }
     closePoemEditor();
     await refreshPoets();
@@ -745,7 +782,7 @@ async function deletePoem(){
   if(!confirm('Bu goşgyny pozmak?')) return;
   try{
     await api('?action=poem','DELETE',{ poetId:curPoetId, poemId:editingPoemId });
-    toast('Pozuldy','ok'); closePoemEditor();
+    toast('Pozuldy','ok'); markChanged(); closePoemEditor();
     await refreshPoets(); await selectPoet(curPoetId); renderPoets();
   }catch(e){ toast(e.message,'err'); }
 }
@@ -802,11 +839,11 @@ async function savePoet(){
   try{
     if(editingPoetId){
       payload.id=editingPoetId;
-      await api('?action=poet','PUT',payload); toast('Üýtgedildi','ok');
+      await api('?action=poet','PUT',payload); toast('Üýtgedildi','ok'); markChanged();
     } else if(me.role==='admin'){
-      await api('?action=poet','POST',payload); toast('Şahyr goşuldy','ok');
+      await api('?action=poet','POST',payload); toast('Şahyr goşuldy','ok'); markChanged();
     } else {
-      await api('?action=proposePoet','POST',payload); toast('Tassyklamaga iberildi','ok');
+      await api('?action=proposePoet','POST',payload); toast('Tassyklamaga iberildi','ok'); markChanged();
     }
     closePoetEditor();
     if(me.role==='admin'||editingPoetId){ await refreshPoets(); renderPoets(); if(curPoetId) selectPoet(curPoetId); }
@@ -824,7 +861,7 @@ async function deletePoetById(id){
   try{
     const r=await api('?action=poet','DELETE',{ id });
     if(r.deleted){
-      toast('Şahyr pozuldy','ok');
+      toast('Şahyr pozuldy','ok'); markChanged();
       poets=poets.filter(x=>x.id!==id);
       if(curPoetId===id){ curPoetId=null; document.body.classList.remove('detail-open'); }
       closePoetEditor(); renderPoets();
@@ -876,7 +913,7 @@ async function reviewPoet(proposalId, approve, isDelete){
   else { if(!confirm(isDelete?'Bu şahyry pozmagy tassyklamak?':'Bu şahyry tassyklap, hazyna goşmak?')) return; }
   try{
     await api('?action=reviewPoet','POST',{ proposalId, approve, reason });
-    toast(approve?(isDelete?'Şahyr pozuldy':'Tassyklandy we goşuldy'):'Ret edildi','ok');
+    toast(approve?(isDelete?'Şahyr pozuldy':'Tassyklandy we goşuldy'):'Ret edildi','ok'); if(approve) markChanged();
     await refreshPoets(); renderPoets(); loadPending();
     if(curPoetId && !poets.find(p=>p.id===curPoetId)){ curPoetId=null; document.body.classList.remove('detail-open'); }
   }catch(e){ toast(e.message,'err'); }
@@ -960,7 +997,7 @@ async function saveBulk(){
     const r=await api('?action=bulkPoems','POST',{ poetId, poems });
     let msg=r.addedCount+' goşgy goşuldy';
     if(r.duplicateCount>0) msg+=' ('+r.duplicateCount+' sanysy gaýtalanýan — goşulmady)';
-    toast(msg,'ok');
+    toast(msg,'ok'); markChanged();
     if(r.duplicateCount>0){
       const w=document.getElementById('bulkDupWarn');
       w.innerHTML='<b>Gaýtalanýan goşgular (goşulmady):</b><br>'+r.duplicates.map(d=>'• «'+esc(d.title)+'» — eýýäm bar: '+esc(d.existsIn)).join('<br>');
