@@ -431,10 +431,20 @@ async function loadImageUrl(imagePath, elId){
   if(c && c!=='fail' && c!=='pending'){ setImg(elId,c); return; }
   if(c==='pending') return;
   imgCache[imagePath]='pending';
-  try{ const r=await api('?action=imageUrl&imagePath='+encodeURIComponent(imagePath)); imgCache[imagePath]=r.url; setImg(elId,r.url); }
+  try{
+    const r=await api('?action=imageUrl&imagePath='+encodeURIComponent(imagePath));
+    const url = r.dataUrl || r.url; // proxy (dataUrl) ýa göni (url)
+    if(url){ imgCache[imagePath]=url; setImg(elId,url); }
+    else { imgCache[imagePath]='fail'; }
+  }
   catch(e){ imgCache[imagePath]='fail'; }
 }
-function setImg(elId,url){ const el=document.getElementById(elId); if(el&&url) el.innerHTML='<img src="'+url+'">'; }
+function setImg(elId,url){
+  const el=document.getElementById(elId);
+  if(!el||!url) return;
+  const fb=el.dataset.fallback || '<span>'+el.textContent.trim().charAt(0)+'</span>';
+  el.innerHTML='<img src="'+url+'" onerror="this.parentElement.innerHTML=\''+fb.replace(/'/g,"\\'")+'\';" style="width:100%;height:100%;object-fit:cover;">';
+}
 
 // ----- LOGIN -----
 function togglePass(){
