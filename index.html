@@ -359,6 +359,46 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- ===== BULK POEMS ===== -->
+<div class="overlay" id="bulkOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3>Köp goşgy goşmak</h3>
+        <div class="who-for" id="bulkForPoet"></div>
+      </div>
+      <button class="btn btn-ghost" onclick="closeBulk()" style="font-size:22px;line-height:1;">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="bulkPickerWrap" class="fl" style="display:none;">
+        <label>Haýsy şahyra?</label>
+        <select id="bulkPoetPick"></select>
+      </div>
+      <div class="fl">
+        <label>Goşgulary ýapyşdyryň (her goşgynyň arasynda <b>===</b> bilen bölüň)</label>
+        <div class="mk-hint">Her goşgynyň <b>1-nji setiri = ady</b>, galanlary = teksti. Mysal:<br>
+Rubagy I<br>Jan bar, dil bar...<br>===<br>Rubagy II<br>Dünýä görmek üçin...</div>
+        <textarea id="bulkText" style="min-height:280px;font-family:'Playfair Display';font-size:14px;line-height:1.7;" placeholder="Goşgynyň ady
+Goşgynyň teksti 1-nji setir
+2-nji setir
+===
+Ikinji goşgynyň ady
+Ikinji goşgynyň teksti
+==="></textarea>
+      </div>
+      <div id="bulkPreview" style="display:none;"></div>
+      <div class="dup-warn" id="bulkDupWarn"></div>
+    </div>
+    <div class="modal-foot">
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-outline" onclick="previewBulk()">Öňsyn görkezmek</button>
+        <button class="btn btn-gold" onclick="saveBulk()" id="saveBulkBtn">Hemmesini goş</button>
+      </div>
+      <button class="btn btn-outline" onclick="closeBulk()">Ýatyr</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const API = 'https://functions.yandexcloud.net/d4eo3o1jdsg8ed74gccl';
 let auth=null, me=null, poets=[], curPoetId=null, curPoems=[], editingPoemId=null, editingPoetId=null, pickedImagePath=null, poemSort='old';
@@ -496,6 +536,7 @@ function renderPoetMain(poet){
         '<option value="new"'+(poemSort==='new'?' selected':'')+'>Täzeden könä</option>'+
       '</select>'+
       '<button class="btn btn-gold btn-sm" onclick="openPoemEditor(null)">+ Täze goşgy</button>'+
+      '<button class="btn btn-outline btn-sm" onclick="openBulk()">+ Köp goşgy</button>'+
     '</div></div>';
   if(curPoems.length===0){ html+='<div class="hint">Entek goşgy ýok</div>'; }
   else{
@@ -790,6 +831,82 @@ async function loadLog(){
   }catch(e){ grid.innerHTML='<div class="hint">'+esc(e.message)+'</div>'; }
 }
 function fmtTime(iso){ if(!iso) return '—'; const d=new Date(iso); const p=n=>String(n).padStart(2,'0'); return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
+
+// ----- BULK POEMS -----
+function parseBulkText(raw){
+  return raw.split(/^={3,}\s*$/m)
+    .map(block => block.trim())
+    .filter(b => b.length > 0)
+    .map(block => {
+      const lines = block.split('\n');
+      const title = lines[0].trim();
+      const text = lines.slice(1).join('\n').trim();
+      return { title, text };
+    })
+    .filter(p => p.title && p.text);
+}
+
+function openBulk(){
+  document.getElementById('bulkText').value='';
+  document.getElementById('bulkPreview').style.display='none';
+  document.getElementById('bulkPreview').innerHTML='';
+  document.getElementById('bulkDupWarn').className='dup-warn';
+  const picker=document.getElementById('bulkPickerWrap');
+  const forPoet=document.getElementById('bulkForPoet');
+  if(curPoetId){
+    picker.style.display='none';
+    const poet=poets.find(p=>p.id===curPoetId);
+    forPoet.textContent=poet?poet.fullName:'';
+    forPoet.style.display='block';
+  } else {
+    picker.style.display='block';
+    forPoet.style.display='none';
+    const sel=document.getElementById('bulkPoetPick');
+    const sorted=poets.slice().sort((a,b)=>a.fullName.localeCompare(b.fullName));
+    sel.innerHTML='<option value="">— Şahyr saýlaň —</option>'+sorted.map(p=>'<option value="'+p.id+'">'+esc(p.fullName)+'</option>').join('');
+  }
+  document.getElementById('bulkOverlay').classList.add('open');
+}
+function closeBulk(){ document.getElementById('bulkOverlay').classList.remove('open'); }
+
+function previewBulk(){
+  const raw=document.getElementById('bulkText').value;
+  const poems=parseBulkText(raw);
+  const prev=document.getElementById('bulkPreview');
+  if(poems.length===0){ prev.innerHTML='<div class="hint" style="padding:16px;">Hiç goşgy tapylmady. Goşgulary <b>===</b> bilen bölüň.</div>'; prev.style.display='block'; return; }
+  let html='<div style="margin-bottom:12px;font-weight:600;color:var(--gold);">'+poems.length+' sany goşgy tapyldy:</div>';
+  poems.forEach((p,i)=>{
+    html+='<div class="poem-item" style="cursor:default;"><div class="pt">'+(i+1)+'. '+esc(p.title)+'</div><div class="pe">'+esc(p.text.slice(0,100))+'</div></div>';
+  });
+  prev.innerHTML=html; prev.style.display='block';
+}
+
+async function saveBulk(){
+  const raw=document.getElementById('bulkText').value;
+  const poems=parseBulkText(raw);
+  if(poems.length===0){ toast('Goşgy tapylmady — === bilen bölüň','err'); return; }
+  const poetId = curPoetId || document.getElementById('bulkPoetPick').value;
+  if(!poetId){ toast('Şahyr saýlaň','err'); return; }
+  const btn=document.getElementById('saveBulkBtn');
+  btn.disabled=true; btn.textContent='Ýüklenýär...';
+  try{
+    const r=await api('?action=bulkPoems','POST',{ poetId, poems });
+    let msg=r.addedCount+' goşgy goşuldy';
+    if(r.duplicateCount>0) msg+=' ('+r.duplicateCount+' sanysy gaýtalanýan — goşulmady)';
+    toast(msg,'ok');
+    if(r.duplicateCount>0){
+      const w=document.getElementById('bulkDupWarn');
+      w.innerHTML='<b>Gaýtalanýan goşgular (goşulmady):</b><br>'+r.duplicates.map(d=>'• «'+esc(d.title)+'» — eýýäm bar: '+esc(d.existsIn)).join('<br>');
+      w.className='dup-warn show';
+    } else {
+      closeBulk();
+    }
+    poets=await api('?action=poets');
+    if(curPoetId) await selectPoet(curPoetId);
+    renderPoets();
+  }catch(e){ toast(e.message,'err'); }
+  finally{ btn.disabled=false; btn.textContent='Hemmesini goş'; }
+}
 
 document.getElementById('lp').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
 </script>
