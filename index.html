@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bulak">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#F8F4EC">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23241D15'/%3E%3Ctext x='90' y='125' text-anchor='middle' font-family='serif' font-size='120' font-weight='700' fill='%23B58A3C'%3EB%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22Bulak%22%2C%22short_name%22%3A%22Bulak%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F8F4EC%22%2C%22theme_color%22%3A%22%23241D15%22%7D">
 <title>Bulak — dolandyryş</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -225,7 +232,7 @@
 <!-- ===== APP ===== -->
 <div id="app">
   <div class="topbar">
-    <div class="brand"><h1 class="serif">Bulak</h1></div>
+    <div class="brand"><h1 class="serif" onclick="goHome()" style="cursor:pointer;">Bulak</h1></div>
     <div class="right">
       <span class="whoami" id="whoami"></span>
       <span class="role-chip" id="roleChip"></span>
@@ -401,7 +408,7 @@ Ikinji goşgynyň teksti
 
 <script>
 const API = 'https://functions.yandexcloud.net/d4eo3o1jdsg8ed74gccl';
-let auth=null, me=null, poets=[], curPoetId=null, curPoems=[], editingPoemId=null, editingPoetId=null, pickedImagePath=null, poemSort='old';
+let auth=null, me=null, poets=[], curPoetId=null, curPoems=[], editingPoemId=null, editingPoetId=null, pickedImagePath=null, poemSort='old', lastPublished=null, catalogVersion=null, needsMigration=false;
 
 function b64(s){ return btoa(unescape(encodeURIComponent(s))); }
 async function api(query, method, body){
@@ -422,6 +429,12 @@ function toast(msg, kind){ const t=document.getElementById('toast'); t.textConte
 function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
 function initial(n){ return (n||'?').trim().charAt(0).toUpperCase(); }
 function stripMk(s){ return (s||'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/^>\s?/gm,'').replace(/^\*\*\*$/gm,'·'); }
+
+async function refreshPoets(){
+  const poetsData=await api('?action=poets');
+  if(Array.isArray(poetsData)){ poets=poetsData; }
+  else { poets=poetsData.poets||[]; lastPublished=poetsData.lastPublished||null; catalogVersion=poetsData.version||null; }
+}
 
 // ----- surat cache -----
 const imgCache={};
@@ -459,7 +472,11 @@ async function doLogin(){
   auth=b64(u+':'+p);
   try{
     me=await api('?action=me');
-    poets=await api('?action=poets');
+    const poetsData=await api('?action=poets');
+    // täze gurluş: {poets:[...], lastPublished, version} ýa-da köne: [...]
+    if(Array.isArray(poetsData)){ poets=poetsData; lastPublished=null; catalogVersion=null; }
+    else { poets=poetsData.poets||[]; lastPublished=poetsData.lastPublished||null; catalogVersion=poetsData.version||null; }
+    needsMigration = !me.migrated;
     document.getElementById('whoami').textContent=me.username;
     const chip=document.getElementById('roleChip');
     chip.textContent=me.role==='admin'?'Admin':'Editor';
@@ -560,7 +577,15 @@ function renderPoetMain(poet){
   document.getElementById('poetMain').innerHTML=html;
   if(poet.imagePath) loadImageUrl(poet.imagePath,'heroAv');
 }
-function backToList(){ document.body.classList.remove('detail-open'); curPoetId=null; renderPoets(); renderWelcome(); }
+function goHome(){
+  curPoetId=null;
+  document.body.classList.add('detail-open'); // mobilde pane-main görünsün
+  renderPoets();
+  document.getElementById('poetMain').innerHTML='<div class="welcome-pane" id="welcomePane"></div>';
+  renderWelcome();
+}
+
+function backToList(){ document.body.classList.remove('detail-open'); curPoetId=null; renderPoets(); }
 
 function renderWelcome(){
   const el=document.getElementById('welcomePane');
@@ -568,7 +593,18 @@ function renderWelcome(){
   const totalPoets=poets.length;
   const totalPoems=poets.reduce((s,p)=>s+(p.poemCount||0),0);
   const eras=new Set(poets.map(p=>p.category)).size;
-  el.innerHTML='<div class="welcome-card">'+
+  let pubInfo = '';
+  if(lastPublished) pubInfo='<div style="font-size:12px;color:var(--ink-soft);margin-top:12px;">Soňky neşir: '+fmtTime(lastPublished)+(catalogVersion?' · v'+catalogVersion:'')+'</div>';
+  let actions = '<button class="btn btn-gold" onclick="openPoetEditor(null)">+ Täze şahyr</button>'+
+    '<button class="btn btn-outline" onclick="openPoemEditor(null)">+ Täze goşgy</button>';
+  if(me.role==='admin'){
+    if(needsMigration){
+      actions+='<button class="btn btn-ok" onclick="doMigrate()" style="background:#2563EB;">⚡ Migrasiýa</button>';
+    }
+    actions+='<button class="btn btn-ok" onclick="doPublish()">📤 Neşir et</button>';
+  }
+  el.innerHTML='<button class="back-btn" onclick="backToList()">‹ Şahyrlar</button>'+
+    '<div class="welcome-card">'+
     '<h2 class="serif">Hoş geldiň, '+esc(me.username)+'</h2>'+
     '<p>Çep tarapdan şahyr saýlap, goşgularyny dolandyryp bilersiň. Ýa-da täze şahyr goşup başla.</p>'+
     '<div class="stat-row">'+
@@ -576,10 +612,31 @@ function renderWelcome(){
       '<div class="stat-box"><div class="num">'+totalPoems.toLocaleString()+'</div><div class="lbl">goşgy</div></div>'+
       '<div class="stat-box"><div class="num">'+eras+'</div><div class="lbl">döwür</div></div>'+
     '</div>'+
-    '<div class="welcome-actions">'+
-      '<button class="btn btn-gold" onclick="openPoetEditor(null)">+ Täze şahyr</button>'+
-      '<button class="btn btn-outline" onclick="openPoemEditor(null)">+ Täze goşgy</button>'+
-    '</div></div>';
+    '<div class="welcome-actions">'+actions+'</div>'+
+    pubInfo+'</div>';
+}
+
+async function doMigrate(){
+  if(!confirm('catalog.json-y kiçi faýllara bölmek? (bir gezeklik, yzyna gaýdyp bolmaýar)')) return;
+  toast('Migrasiýa başlady...');
+  try{
+    const r=await api('?action=migrate','POST',{});
+    toast('Migrasiýa tamam! '+r.poetsCount+' şahyr bölündi','ok');
+    needsMigration=false;
+    renderWelcome();
+  }catch(e){ toast(e.message,'err'); }
+}
+
+async function doPublish(){
+  if(!confirm('Ähli üýtgeşmeleri neşir edip, Flutter üçin catalog.json täzelensinmi?')) return;
+  toast('Neşir edilýär...');
+  try{
+    const r=await api('?action=publish','POST',{});
+    toast('Neşir edildi! v'+r.version,'ok');
+    catalogVersion=r.version;
+    lastPublished=new Date().toISOString();
+    renderWelcome();
+  }catch(e){ toast(e.message,'err'); }
 }
 function changeSort(v){ poemSort=v; const poet=poets.find(p=>p.id===curPoetId); if(poet) renderPoetMain(poet); }
 
@@ -676,7 +733,7 @@ async function savePoem(){
       toast('Goşuldy','ok');
     }
     closePoemEditor();
-    poets=await api('?action=poets');
+    await refreshPoets();
     await selectPoet(curPoetId);
     renderPoets();
   }catch(e){ toast(e.message,'err'); }
@@ -689,7 +746,7 @@ async function deletePoem(){
   try{
     await api('?action=poem','DELETE',{ poetId:curPoetId, poemId:editingPoemId });
     toast('Pozuldy','ok'); closePoemEditor();
-    poets=await api('?action=poets'); await selectPoet(curPoetId); renderPoets();
+    await refreshPoets(); await selectPoet(curPoetId); renderPoets();
   }catch(e){ toast(e.message,'err'); }
 }
 
@@ -752,7 +809,7 @@ async function savePoet(){
       await api('?action=proposePoet','POST',payload); toast('Tassyklamaga iberildi','ok');
     }
     closePoetEditor();
-    if(me.role==='admin'||editingPoetId){ poets=await api('?action=poets'); renderPoets(); if(curPoetId) selectPoet(curPoetId); }
+    if(me.role==='admin'||editingPoetId){ await refreshPoets(); renderPoets(); if(curPoetId) selectPoet(curPoetId); }
     loadPending();
   }catch(e){ toast(e.message,'err'); }
 }
@@ -820,7 +877,7 @@ async function reviewPoet(proposalId, approve, isDelete){
   try{
     await api('?action=reviewPoet','POST',{ proposalId, approve, reason });
     toast(approve?(isDelete?'Şahyr pozuldy':'Tassyklandy we goşuldy'):'Ret edildi','ok');
-    poets=await api('?action=poets'); renderPoets(); loadPending();
+    await refreshPoets(); renderPoets(); loadPending();
     if(curPoetId && !poets.find(p=>p.id===curPoetId)){ curPoetId=null; document.body.classList.remove('detail-open'); }
   }catch(e){ toast(e.message,'err'); }
 }
@@ -911,7 +968,7 @@ async function saveBulk(){
     } else {
       closeBulk();
     }
-    poets=await api('?action=poets');
+    await refreshPoets();
     if(curPoetId) await selectPoet(curPoetId);
     renderPoets();
   }catch(e){ toast(e.message,'err'); }
