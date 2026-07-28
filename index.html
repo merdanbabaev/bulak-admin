@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
 <style>
   :root {
     --bg: #F8F4EC; --bg-warm: #F6F1E7; --card: #FFFDF8; --ink: #241D15; --ink-soft: #8A7C62;
@@ -406,8 +407,13 @@
       </div>
       <div class="fl">
         <label>Goşgulary ýapyşdyryň (her goşgynyň arasynda <b>===</b> bilen bölüň)</label>
-        <div class="mk-hint">Her goşgynyň <b>1-nji setiri = ady</b>, galanlary = teksti. Mysal:<br>
-Rubagy I<br>Jan bar, dil bar...<br>===<br>Rubagy II<br>Dünýä görmek üçin...</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <input type="file" id="docxFile" accept=".docx" style="display:none;" onchange="handleDocxFile(event)">
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('docxFile').click()">📄 Word faýlyndan</button>
+          <span id="docxStatus" style="font-size:12px;color:var(--ink-soft);align-self:center;"></span>
+        </div>
+        <div class="mk-hint">Her goşgynyň <b>1-nji setiri = ady</b>, galanlary = teksti. Goşgular <b>===</b> bilen bölünýär.<br>
+<b>Word faýlynda:</b> bentler 1 boş setir bilen, goşgular 2+ boş setir (ýa ===) bilen aýrylmaly. Ýogyn/italik saklanýar.</div>
         <textarea id="bulkText" style="min-height:280px;font-family:'Playfair Display';font-size:14px;line-height:1.7;" placeholder="Goşgynyň ady
 Goşgynyň teksti 1-nji setir
 2-nji setir
@@ -978,11 +984,27 @@ function previewBulk(){
   const poems=parseBulkText(raw);
   const prev=document.getElementById('bulkPreview');
   if(poems.length===0){ prev.innerHTML='<div class="hint" style="padding:16px;">Hiç goşgy tapylmady. Goşgulary <b>===</b> bilen bölüň.</div>'; prev.style.display='block'; return; }
-  let html='<div style="margin-bottom:12px;font-weight:600;color:var(--gold);">'+poems.length+' sany goşgy tapyldy:</div>';
+  let html='<div style="margin-bottom:12px;font-weight:600;color:var(--gold);">'+poems.length+' sany goşgy tapyldy: <span style="font-weight:400;color:var(--ink-soft);font-size:12px;">(ýalňyş bölünen bolsa ⬆ bilen birleşdiriň)</span></div>';
   poems.forEach((p,i)=>{
-    html+='<div class="poem-item" style="cursor:default;"><div class="pt">'+(i+1)+'. '+esc(p.title)+'</div><div class="pe">'+esc(p.text.slice(0,100))+'</div></div>';
+    html+='<div class="poem-item" style="cursor:default;display:flex;gap:10px;align-items:flex-start;">'+
+      '<div style="flex:1;min-width:0;"><div class="pt">'+(i+1)+'. '+esc(p.title)+'</div>'+
+      '<div class="pe">'+esc(p.text.slice(0,100))+'</div>'+
+      '<div style="font-size:11px;color:var(--ink-soft);margin-top:4px;">'+p.text.split('\n').filter(l=>l.trim()).length+' setir</div></div>'+
+      (i>0?'<button class="btn btn-outline btn-sm" style="flex-shrink:0;" onclick="mergeBulk('+i+')" title="Öňki goşga birleşdir">⬆ Birleşdir</button>':'')+
+      '</div>';
   });
   prev.innerHTML=html; prev.style.display='block';
+}
+
+// i-nji goşgyny öňki (i-1) goşga birleşdirmek
+function mergeBulk(i){
+  const poems=parseBulkText(document.getElementById('bulkText').value);
+  if(i<=0||i>=poems.length) return;
+  poems[i-1].text += '\n\n' + poems[i].title + '\n' + poems[i].text;
+  poems.splice(i,1);
+  document.getElementById('bulkText').value=poems.map(p=>p.title+'\n'+p.text).join('\n===\n');
+  previewBulk();
+  toast('Birleşdirildi — '+poems.length+' goşgy galdy','ok');
 }
 
 async function saveBulk(){
@@ -1010,6 +1032,129 @@ async function saveBulk(){
     renderPoets();
   }catch(e){ toast(e.message,'err'); }
   finally{ btn.disabled=false; btn.textContent='Hemmesini goş'; }
+}
+
+// ----- WORD FAÝLY OKAMAK -----
+async function handleDocxFile(ev){
+  const file=ev.target.files[0];
+  if(!file) return;
+  const status=document.getElementById('docxStatus');
+  status.textContent='Okalýar...';
+  try{
+    const arrayBuffer=await file.arrayBuffer();
+    const result=await mammoth.convertToHtml({arrayBuffer});
+    const text=docxHtmlToMarkupText(result.value);
+    const poems=splitDocxPoems(text);
+    if(poems.length===0){
+      status.textContent='Goşgy tapylmady — faýlyň gurluşyny barlaň';
+      toast('Goşgy tapylmady','err');
+      return;
+    }
+    // Normallaşdyrylan formatda textarea doldurmak (title\ntext\n===)
+    document.getElementById('bulkText').value=poems.map(p=>p.title+'\n'+p.text).join('\n===\n');
+    status.textContent='✓ '+poems.length+' goşgy tapyldy';
+    toast(poems.length+' goşgy tapyldy — barlaň we goşuň','ok');
+    previewBulk();
+  }catch(e){
+    status.textContent='Okap bolmady';
+    toast('Word faýly okap bolmady: '+e.message,'err');
+  }
+  ev.target.value='';
+}
+
+// Mammoth HTML → markup tekst (**ýogyn** *italik*, abzaslar setirlere)
+function docxHtmlToMarkupText(html){
+  const div=document.createElement('div');
+  div.innerHTML=html;
+  const lines=[];
+  function inlineOf(node){
+    let out='';
+    node.childNodes.forEach(ch=>{
+      if(ch.nodeType===3){ out+=ch.textContent; }
+      else if(ch.nodeType===1){
+        const tag=ch.tagName.toLowerCase();
+        const inner=inlineOf(ch);
+        if(tag==='strong'||tag==='b') out+='**'+inner+'**';
+        else if(tag==='em'||tag==='i') out+='*'+inner+'*';
+        else if(tag==='br') out+='\n';
+        else out+=inner;
+      }
+    });
+    return out;
+  }
+  div.childNodes.forEach(node=>{
+    if(node.nodeType!==1) return;
+    const tag=node.tagName.toLowerCase();
+    if(tag==='p'||tag==='h1'||tag==='h2'||tag==='h3'||tag==='h4'){
+      const t=inlineOf(node).replace(/\u00a0/g,' ');
+      // p içindäki <br> köp setire bölünýär
+      t.split('\n').forEach(l=>lines.push(l.trimEnd()));
+    } else if(tag==='table'||tag==='ul'||tag==='ol'){
+      const t=node.textContent.trim();
+      if(t) t.split('\n').forEach(l=>lines.push(l.trim()));
+    }
+  });
+  return lines.join('\n');
+}
+
+// Tekst → goşgular: 2+ boş setir ýa "===" bölýär; 1 boş setir = bendiň içinde galýar
+// Akylly düzediş: şübheli bölekler (kiçi harp başly, ýeke setirli, öňkiniň otur bilen gutaran ýerinden soňkylar) öňki goşga birleşdirilýär
+function splitDocxPoems(text){
+  const rawLines=text.split('\n').map(l=>l.trimEnd());
+  const blocks=[];
+  let cur=[];
+  let emptyRun=0;
+  for(const line of rawLines){
+    const isEmpty=line.trim()==='';
+    const isSep=/^={3,}$/.test(line.trim());
+    if(isSep){
+      if(cur.length){ blocks.push(cur); cur=[]; }
+      emptyRun=0;
+      continue;
+    }
+    if(isEmpty){
+      emptyRun++;
+      if(emptyRun>=2){
+        if(cur.length){ blocks.push(cur); cur=[]; }
+      } else if(cur.length){
+        cur.push('');
+      }
+    } else {
+      emptyRun=0;
+      cur.push(line);
+    }
+  }
+  if(cur.length) blocks.push(cur);
+
+  // Akylly gurnamak: her blok täze goşgymy ýa öňkiniň dowamymy?
+  const poems=[];
+  for(let block of blocks){
+    while(block.length&&block[0].trim()==='') block.shift();
+    while(block.length&&block[block.length-1].trim()==='') block.pop();
+    if(!block.length) continue;
+
+    const firstClean=block[0].replace(/\*+/g,'').replace(/^>\s?/,'').trim();
+    const prev=poems.length?poems[poems.length-1]:null;
+    const prevEndsIncomplete=prev&&/[,;:—–-]\s*$/.test(prev.text.replace(/\*+/g,'').trim());
+    const startsLower=/^[a-zäöüýçşňž]/.test(firstClean);
+    const singleLine=block.length===1;
+
+    const isContinuation = prev && (singleLine || startsLower || prevEndsIncomplete);
+
+    if(isContinuation){
+      const frag=block.join('\n').trim();
+      // öňki otur bilen gutaran bolsa şol bendiň dowamy, ýogsam täze bent
+      prev.text += (prevEndsIncomplete ? '\n' : '\n\n') + frag;
+      prev.merged=(prev.merged||0)+1;
+    } else {
+      if(block.length<2) continue; // ilkinji blok ýeke setir bolsa goşgy däl
+      const title=block[0].replace(/\*\*/g,'').replace(/\*/g,'').trim();
+      const txt=block.slice(1).join('\n').trim();
+      if(!title||!txt) continue;
+      poems.push({ title, text: txt });
+    }
+  }
+  return poems;
 }
 
 document.getElementById('lp').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
