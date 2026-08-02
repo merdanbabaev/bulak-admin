@@ -299,6 +299,8 @@
     <div class="inner-wrap">
       <div class="section-title serif">Editorlaryň soňky girişi</div>
       <div class="sessions-grid" id="sessGrid"></div>
+      <div class="section-title serif">Ätiýaçlyk nusgalar</div>
+      <div class="card" style="padding: 6px 16px; margin-bottom: 24px;" id="backupsList"></div>
       <div class="section-title serif">Hereketleriň taryhy</div>
       <div class="card" style="padding: 6px 16px;" id="logList"></div>
     </div>
@@ -623,26 +625,22 @@ function renderDashboard(){
   const totalPoets=poets.length;
   const totalPoems=poets.reduce((s,p)=>s+(p.poemCount||0),0);
 
-  // Üýtgeşme barmy barlamak (meta updated_at > lastPublished)
-  const canPublish = me.role==='admin';
   const needsPublish = hasChanges;
 
   let pubHtml = '';
-  if(canPublish){
-    if(lastPublished){
-      pubHtml = needsPublish
-        ? '<div class="dash-pub"><span class="stale">Neşir edilmedik üýtgeşmeler bar</span><br>Soňky: '+fmtTime(lastPublished)+'</div>'
-        : '<div class="dash-pub"><b>✓ Güncel</b><br>Soňky: '+fmtTime(lastPublished)+'</div>';
-    }
+  if(lastPublished){
+    pubHtml = needsPublish
+      ? '<div class="dash-pub"><span class="stale">Neşir edilmedik üýtgeşmeler bar</span><br>Soňky: '+fmtTime(lastPublished)+'</div>'
+      : '<div class="dash-pub"><b>✓ Güncel</b><br>Soňky: '+fmtTime(lastPublished)+'</div>';
   }
 
   let migrateBtn = '';
-  if(canPublish && needsMigration){
+  if(me.role==='admin' && needsMigration){
     migrateBtn = '<button class="btn btn-sm" onclick="doMigrate()" style="background:#2563EB;color:#fff;">⚡ Migrasiýa</button>';
   }
 
   let publishBtn = '';
-  if(canPublish && !needsMigration){
+  if(!needsMigration){
     publishBtn = '<button class="btn-publish" onclick="doPublish()"'+(needsPublish?'':' disabled')+'>📤 Neşir et</button>';
   }
 
@@ -939,6 +937,38 @@ async function loadLog(){
     (data.entries||[]).forEach(e=>{ lh+='<div class="log-line"><span class="log-time">'+fmtTime(e.time)+'</span><span class="log-user">'+esc(e.user)+'</span><span class="log-act"><span class="a">'+esc(e.action)+'</span> <span class="d">'+esc(e.detail)+'</span></span></div>'; });
     list.innerHTML=lh||'<div class="hint">Hereket ýok</div>';
   }catch(e){ grid.innerHTML='<div class="hint">'+esc(e.message)+'</div>'; }
+  loadBackups();
+}
+
+async function loadBackups(){
+  const el=document.getElementById('backupsList');
+  if(!el) return;
+  el.innerHTML='<div class="loader"><div class="spin"></div></div>';
+  try{
+    const backups=await api('?action=backups');
+    if(!backups.length){ el.innerHTML='<div class="hint">Entek ätiýaçlyk nusga ýok — ilkinji neşirden soň dörär</div>'; return; }
+    let html='';
+    backups.forEach(b=>{
+      const sizeMb=b.size?(b.size/1048576).toFixed(1)+' MB':'';
+      html+='<div class="log-line" style="align-items:center;">'+
+        '<span class="log-time">'+fmtTime(b.created)+'</span>'+
+        '<span style="flex:1;font-size:12.5px;color:var(--ink-soft);">'+esc(b.name)+' '+sizeMb+'</span>'+
+        '<button class="btn btn-outline btn-sm" onclick="doRestore(\''+esc(b.name)+'\')">↩ Dikelt</button></div>';
+    });
+    el.innerHTML=html;
+  }catch(e){ el.innerHTML='<div class="hint">'+esc(e.message)+'</div>'; }
+}
+
+async function doRestore(name){
+  if(!confirm('DIKKAT: Häzirki ähli maglumat «'+name+'» nusgasy bilen çalşyrylar!\n\nSoňky nusgadan soň edilen üýtgeşmeler ýitér. Dowam etmelimi?')) return;
+  if(!confirm('Hakykatdanam dikeltmelimi? Bu amal yzyna gaýtaryp bolmaýar.')) return;
+  toast('Dikeldilýär... (1-2 minut alyp biler)');
+  try{
+    const r=await api('?action=restore','POST',{ name });
+    toast('Dikeldildi! '+r.poetsCount+' şahyr','ok');
+    await refreshPoets(); renderPoets(); renderDashboard(); loadBackups();
+    if(curPoetId) selectPoet(curPoetId);
+  }catch(e){ toast(e.message,'err'); }
 }
 function fmtTime(iso){ if(!iso) return '—'; const d=new Date(iso); const p=n=>String(n).padStart(2,'0'); return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
 
