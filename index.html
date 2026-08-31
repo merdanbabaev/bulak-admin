@@ -112,6 +112,9 @@
   .poem-item:hover { border-color: var(--gold-soft); transform: translateY(-1px); }
   .poem-item .pt { font-family: 'Playfair Display'; font-size: 17px; font-weight: 600; margin-bottom: 5px; }
   .poem-item .pe { color: var(--ink-soft); font-size: 12.5px; line-height: 1.55; white-space: pre-line; max-height: 3em; overflow: hidden; }
+  .poem-sec { font-size: 11px; font-weight: 700; letter-spacing: .04em; color: var(--gold); margin-bottom: 4px; }
+  .chk-row { display:flex; align-items:center; gap:8px; margin-top:8px; font-size:12.5px; color:var(--ink-soft); }
+  .chk-row input { width:16px; height:16px; accent-color: var(--gold); }
   .hint { text-align: center; color: var(--ink-soft); font-size: 14px; padding: 60px 20px; }
 
   /* Boş ekran - hoşgeldiň */
@@ -168,6 +171,15 @@
   .fl textarea { min-height: 190px; resize: vertical; line-height: 1.7; font-size: 15px; }
   .fl textarea.poem-area { font-family: 'Playfair Display'; }
   .fl-row { display: flex; gap: 12px; } .fl-row .fl { flex: 1; }
+  .dur-chip { display:inline-block; padding:6px 11px; border-radius:20px; border:1.5px solid var(--gold-line); background:var(--bg-warm); font-size:12px; font-weight:600; color:var(--ink-soft); margin:0 6px 6px 0; }
+  .dur-chip:hover { border-color:var(--gold); color:var(--ink); }
+  .hero-status { font-size:11px; font-weight:700; padding:3px 8px; border-radius:20px; display:inline-block; }
+  .hero-status.live { background:#E8F5D8; color:var(--ok); }
+  .hero-status.wait { background:#F6F1E7; color:var(--ink-soft); }
+  .hero-status.done { background:#FDECEC; color:var(--danger); }
+  .hero-status.off { background:#EEE; color:#888; }
+  .hero-img-prev { min-height: 72px; background: var(--bg-warm); border: 1.5px dashed var(--gold-line); border-radius: 12px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .hero-img-prev img { width:100%; height:88px; object-fit:cover; display:block; }
 
   .mk-bar { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
   .mk-btn { background: var(--bg-warm); border: 1px solid var(--line); border-radius: 8px; padding: 6px 11px; font-size: 12.5px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 5px; }
@@ -211,6 +223,96 @@
   .btn-publish:disabled:hover { opacity: .7; }
   .spin { display: inline-block; width: 22px; height: 22px; border: 2.5px solid var(--gold-line); border-top-color: var(--gold); border-radius: 50%; animation: sp 0.7s linear infinite; }
   @keyframes sp { to { transform: rotate(360deg); } }
+
+  /* ===== GOŞMAÇA: seg, chips, gözleg belligi ===== */
+  .seg { display: flex; background: var(--bg-warm); border: 1.5px solid var(--line); border-radius: 11px; padding: 3px; gap: 3px; }
+  .seg button { flex: 1; border: none; background: transparent; padding: 7px 6px; font-size: 12px; font-weight: 600; color: var(--ink-soft); border-radius: 8px; white-space: nowrap; transition: all .13s; }
+  .seg button:hover { color: var(--ink); }
+  .seg button.on { background: var(--card); color: var(--gold); box-shadow: var(--shadow); }
+  .chips { display: flex; gap: 6px; margin: 8px 0 0; flex-wrap: wrap; }
+  .chip { border: 1.5px solid var(--line); background: var(--card); color: var(--ink-soft); font-size: 11.5px; font-weight: 600; padding: 5px 12px; border-radius: 20px; transition: all .13s; }
+  .chip:hover { border-color: var(--gold-soft); color: var(--ink); }
+  .chip.on { background: var(--ink); color: var(--gold-soft); border-color: var(--ink); }
+  mark.hl { background: var(--gold-soft); color: inherit; border-radius: 3px; padding: 0 1px; }
+  .poet-row.flash { animation: rowFlash 2.2s ease; }
+  @keyframes rowFlash { 0%, 35% { background: var(--gold-soft); } 100% { background: var(--card); } }
+  .res-count { font-size: 11.5px; color: var(--ink-soft); margin: 8px 4px 0; min-height: 15px; }
+  .poet-row .pinfo { flex: 1; min-width: 0; }
+  .poet-row .py { font-size: 11px; color: var(--ink-soft); margin-top: 1px; }
+  .poet-row.sel .py { color: var(--gold-soft); opacity: .8; }
+  kbd { background: var(--bg-warm); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; font-size: 11px; font-family: 'Poppins'; color: var(--ink-soft); }
+
+  /* Ähli goşgularda gözleg — netije kartlary */
+  .gs-item { background: var(--card); border: 1px solid var(--gold-line); border-radius: 12px; padding: 11px 13px; margin-bottom: 8px; cursor: pointer; transition: all .13s; box-shadow: var(--shadow); }
+  .gs-item:hover { border-color: var(--gold-soft); transform: translateY(-1px); }
+  .gs-item .gt { font-family: 'Playfair Display'; font-size: 14.5px; font-weight: 600; }
+  .gs-item .gp { font-size: 11px; color: var(--gold); font-weight: 600; margin: 2px 0 4px; }
+  .gs-item .gx { font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+
+  /* ===== ULY REDAKTOR (goşgy + köp goşgy) ===== */
+  .modal.modal-xl { max-width: 1100px; display: flex; flex-direction: column; height: calc(100vh - 44px); margin: 22px auto; }
+  .modal-xl .modal-body { flex: 1; overflow: hidden; padding: 0; display: flex; }
+  .ed-left { flex: 1; min-width: 0; overflow-y: auto; padding: 18px 22px; }
+  .ed-right { width: 42%; min-width: 320px; border-left: 1px solid var(--gold-line); background: var(--bg-warm); overflow-y: auto; padding: 18px 22px; }
+  .ed-right-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--gold); margin-bottom: 12px; }
+  .ed-tabs { display: none; }
+  .counter { font-size: 11.5px; color: var(--ink-soft); margin-top: 7px; font-variant-numeric: tabular-nums; }
+  .foot-keys { font-size: 11.5px; color: var(--ink-soft); display: flex; align-items: center; gap: 5px; }
+
+  /* Janly öňsyn — goşgynyň taýýar görnüşi */
+  .pv-empty { color: var(--ink-soft); font-size: 13px; text-align: center; padding: 40px 10px; line-height: 1.6; }
+  .pv-sec { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .pv-title { font-family: 'Playfair Display'; font-size: 22px; font-weight: 700; line-height: 1.2; margin-bottom: 6px; }
+  .pv-epi { font-style: italic; color: var(--ink-soft); font-size: 13px; margin-bottom: 14px; }
+  .pv-body { font-family: 'Playfair Display'; font-size: 15px; line-height: 1.75; }
+  .pv-st { margin-bottom: 16px; }
+  .pv-q { color: var(--ink-soft); font-style: italic; padding-left: 12px; border-left: 2.5px solid var(--gold-soft); display: inline-block; }
+  .pv-div { text-align: center; color: var(--gold); margin: 14px 0; letter-spacing: .3em; font-size: 13px; }
+
+  /* Razdel saýlawy */
+  .sec-input-wrap { margin-top: 8px; display: none; }
+  .sec-input-wrap.show { display: block; }
+  .dup-warn .btn { margin-top: 10px; }
+
+  /* Taslama dikeltme zolagy */
+  .draft-bar { display: none; background: #EAF3DE; border: 1px solid #CBE3B2; border-radius: 11px; padding: 10px 13px; font-size: 12.5px; color: var(--ok); margin-bottom: 14px; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .draft-bar.show { display: flex; }
+
+  /* Köp goşgy — janly öňsyn kartlary */
+  .bp-sum { font-size: 13px; font-weight: 600; margin-bottom: 12px; }
+  .bp-sum .warn { color: var(--accent); }
+  .bp-card { background: var(--card); border: 1px solid var(--gold-line); border-radius: 12px; padding: 12px 14px; margin-bottom: 9px; box-shadow: var(--shadow); }
+  .bp-card.bad { border-color: #F5C4C4; background: #FFFAFA; }
+  .bp-card .bp-top { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  .bp-card .bp-num { font-size: 11px; font-weight: 700; color: var(--ink-soft); flex-shrink: 0; width: 22px; }
+  .bp-title-in { flex: 1; min-width: 0; border: 1px solid transparent; background: transparent; font-family: 'Playfair Display'; font-size: 15px; font-weight: 600; color: var(--ink); padding: 3px 6px; border-radius: 7px; }
+  .bp-title-in:hover { border-color: var(--line); background: var(--bg-warm); }
+  .bp-title-in:focus { outline: none; border-color: var(--gold); background: #fff; }
+  .bp-acts { display: flex; gap: 4px; flex-shrink: 0; }
+  .bp-acts button { border: 1px solid var(--line); background: var(--bg-warm); border-radius: 7px; padding: 4px 8px; font-size: 12px; color: var(--ink-soft); }
+  .bp-acts button:hover { border-color: var(--gold-soft); color: var(--ink); }
+  .bp-sec-tag { font-size: 10.5px; font-weight: 700; color: var(--gold); background: #FBF3DF; border-radius: 6px; padding: 2px 8px; display: inline-block; margin-bottom: 5px; }
+  .bp-ex { font-size: 12px; color: var(--ink-soft); line-height: 1.5; white-space: pre-line; max-height: 3em; overflow: hidden; }
+  .bp-meta { font-size: 11px; color: var(--ink-soft); margin-top: 5px; }
+  .bp-meta .err-t { color: var(--danger); font-weight: 600; }
+
+  /* Tassyklama modaly */
+  .cf-modal { max-width: 400px; text-align: center; }
+  .cf-modal .cf-ico { font-size: 34px; margin-bottom: 10px; }
+  .cf-modal .cf-msg { font-size: 14px; line-height: 1.6; color: var(--ink); margin-bottom: 20px; }
+  .cf-modal .cf-btns { display: flex; gap: 10px; justify-content: center; }
+  .btn-danger-solid { background: var(--danger); color: #fff; }
+  .btn-danger-solid:hover { opacity: .9; }
+
+  @media (max-width: 780px) {
+    .modal.modal-xl { height: auto; min-height: 100vh; margin: 0; border-radius: 0; }
+    .modal-xl .modal-body { display: block; overflow: visible; }
+    .ed-right { display: none; width: 100%; min-width: 0; border-left: none; }
+    .modal-xl.show-pv .ed-left { display: none; }
+    .modal-xl.show-pv .ed-right { display: block; }
+    .ed-tabs { display: flex; margin: 12px 16px 0; }
+    .foot-keys { display: none; }
+  }
 
   /* ===== MOBILE ===== */
   @media (max-width: 780px) {
@@ -264,6 +366,9 @@
 
   <div class="tabbar">
     <button class="tab active" id="tabPoets" onclick="switchTab('poets')"><span>Şahyrlar</span></button>
+    <button class="tab" id="tabNotice" onclick="switchTab('notice')"><span>Bildiriş</span></button>
+    <button class="tab" id="tabHero" onclick="switchTab('hero')"><span>Baş slaýd</span></button>
+    <button class="tab" id="tabMail" onclick="switchTab('mail')"><span>Hatlar</span><span class="badge" id="mailBadge" style="display:none;">0</span></button>
     <button class="tab" id="tabPending" onclick="switchTab('pending')"><span>Teklipler</span><span class="badge" id="pendBadge" style="display:none;">0</span></button>
     <button class="tab" id="tabLog" onclick="switchTab('log')" style="display:none;"><span>Hereketler</span></button>
   </div>
@@ -274,17 +379,78 @@
     <div class="poets-wrap">
       <div class="split">
         <div class="pane-poets">
-          <input class="search-box" id="poetSearch" placeholder="Şahyr gözle..." oninput="renderPoets()">
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-outline btn-sm" style="flex:1;" onclick="openPoetEditor(null)">+ Täze şahyr</button>
-            <button class="btn btn-gold btn-sm" style="flex:1;" onclick="openPoemEditor(null)">+ Täze goşgy</button>
+          <input class="search-box" id="poetSearch" placeholder="Şahyr gözle…" oninput="onSearchInput()" style="margin-bottom:8px;">
+          <div class="seg" style="margin-bottom:8px;">
+            <button id="sm_poets" class="on" onclick="setSearchMode('poets')">Şahyrlar</button>
+            <button id="sm_poems" onclick="setSearchMode('poems')">Goşgularyň içinde</button>
           </div>
+          <div id="poetTools">
+            <div class="seg">
+              <button id="so_era" class="on" onclick="setPoetSort('era')">Döwür</button>
+              <button id="so_year" onclick="setPoetSort('year')">Doglan ýyly</button>
+              <button id="so_abc" onclick="setPoetSort('abc')">A–Ž</button>
+            </div>
+            <div class="chips">
+              <button class="chip on" id="era_all" onclick="setEraFilter('all')">Hemmesi</button>
+              <button class="chip" id="era_XVIII_XIX" onclick="setEraFilter('XVIII_XIX')">XVIII–XIX</button>
+              <button class="chip" id="era_XX_XXI" onclick="setEraFilter('XX_XXI')">XX–XXI</button>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:10px;">
+              <button class="btn btn-outline btn-sm" style="flex:1;" onclick="openPoetEditor(null)">+ Täze şahyr</button>
+              <button class="btn btn-gold btn-sm" style="flex:1;" onclick="openPoemEditor(null)">+ Täze goşgy</button>
+            </div>
+          </div>
+          <div class="res-count" id="resCount"></div>
           <div class="poet-list-scroll"><div id="poetList" style="margin-top:6px;"></div></div>
         </div>
         <div class="pane-main" id="poetMain">
           <div class="hint">Şahyr saýlaň</div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="view" id="viewNotice">
+    <div class="inner-wrap" style="max-width:640px;">
+      <div class="section-title serif">App bildirişi</div>
+      <p style="color:var(--ink-soft);font-size:13.5px;line-height:1.6;margin:-4px 0 18px;">Neşir gerek däl. Programma açylanda ýokardan owadan habar çykýar we 8 sekuntdan öz-özünden ýitýär. Täze tekst ibereniňizde täze habar görkezilýär. Islän wagtyňyz «Aýyr» bilen ýok edip bilersiňiz.</p>
+      <div class="card" style="padding:20px 22px;">
+        <div class="fl">
+          <label>Sözbaşy</label>
+          <input id="noticeTitle" type="text" placeholder="Täze maglumatlar">
+        </div>
+        <div class="fl">
+          <label>Tekst</label>
+          <textarea id="noticeBody" placeholder="Islendik habar: täze goşgy, duýduryş, mähnet..." style="min-height:140px;"></textarea>
+        </div>
+        <div id="noticeLast" style="font-size:12.5px;color:var(--ink-soft);margin-bottom:14px;"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-gold" id="noticeSendBtn" onclick="sendNotice()">Bildiriş iber</button>
+          <button class="btn btn-danger" id="noticeClearBtn" onclick="clearNotice()">Aýyr</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="viewHero">
+    <div class="inner-wrap" style="max-width:720px;">
+      <div class="section-title serif">Baş sahypa slaýdlary</div>
+      <p style="color:var(--ink-soft);font-size:13.5px;line-height:1.6;margin:-4px 0 18px;">Günüň goşgusy programmada galýar. Surat, gysga tekst we doly habar şu ýerden — Play täzelemesi gerek däl. Aýyrmak üçin slaýdy «Poz» ýa «Görkez» belligni aýyryň, soň «Ýazdyr».</p>
+      <div id="heroLiveWarn" style="display:none;background:#FFF4E5;border:1px solid #F3D19E;color:#8A5A12;border-radius:12px;padding:10px 14px;font-size:13px;margin-bottom:14px;"></div>
+      <div id="heroList"></div>
+      <input type="file" id="heroImgFile" accept="image/*" style="display:none;">
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline" onclick="addHeroSlide()">+ Slaýd goş</button>
+        <button class="btn btn-gold" id="heroSaveBtn" onclick="saveHeroSlides()">Ýazdyr (app-a iber)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="viewMail">
+    <div class="inner-wrap" style="max-width:720px;">
+      <div class="section-title serif">Ulanyjy hatlary</div>
+      <p style="color:var(--ink-soft);font-size:13.5px;line-height:1.6;margin:-4px 0 18px;">Diňe size degişli hatlar. Programma / funksiýa — MerdanB; şahyr we goşgy — TaymazS. Jogap programmada görünýär.</p>
+      <div id="mailList"></div>
     </div>
   </div>
 
@@ -300,6 +466,10 @@
       <div class="section-title serif">Editorlaryň soňky girişi</div>
       <div class="sessions-grid" id="sessGrid"></div>
       <div class="section-title serif">Ätiýaçlyk nusgalar</div>
+      <div style="margin-bottom:10px;">
+        <button class="btn btn-outline btn-sm" onclick="doMakeBackup()">Ätiýaçlyk al</button>
+        <span style="font-size:12px;color:var(--ink-soft);margin-left:8px;">Iň köp 10 nusga. Timer her 3 günden hem alýar.</span>
+      </div>
       <div class="card" style="padding: 6px 16px; margin-bottom: 24px;" id="backupsList"></div>
       <div class="section-title serif">Hereketleriň taryhy</div>
       <div class="card" style="padding: 6px 16px;" id="logList"></div>
@@ -309,7 +479,7 @@
 
 <!-- ===== POEM EDITOR ===== -->
 <div class="overlay" id="poemOverlay">
-  <div class="modal">
+  <div class="modal modal-xl" id="poemModal">
     <div class="modal-head">
       <div>
         <h3 id="poemModalTitle">Täze goşgy</h3>
@@ -317,36 +487,68 @@
       </div>
       <button class="btn btn-ghost" onclick="closePoemEditor()" style="font-size:22px;line-height:1;">×</button>
     </div>
+    <div class="seg ed-tabs">
+      <button id="pt_write" class="on" onclick="setEdTab(false)">✍ Ýazgy</button>
+      <button id="pt_view" onclick="setEdTab(true)">◉ Öňsyn</button>
+    </div>
     <div class="modal-body">
-      <div id="poetPickerWrap" class="fl" style="display:none;">
-        <label>Haýsy şahyra?</label>
-        <select id="poemPoetPick" onchange="onPoemPoetPick()"></select>
-      </div>
-      <div class="fl">
-        <label>Goşgynyň ady</label>
-        <input id="poemTitle" type="text" placeholder="Rubagy I">
-      </div>
-      <div class="fl">
-        <label>Epigraf (islege görä)</label>
-        <input id="poemEpigraph" type="text" placeholder="Goşgynyň öňündäki setir...">
-      </div>
-      <div class="fl">
-        <label>Goşgynyň teksti</label>
-        <div class="mk-bar">
-          <button class="mk-btn" onclick="applyMarkup('bold')"><span class="ico" style="font-weight:700;">B</span> Ýogyn</button>
-          <button class="mk-btn" onclick="applyMarkup('italic')"><span class="ico" style="font-style:italic;">I</span> Italik</button>
-          <button class="mk-btn" onclick="applyMarkup('quote')"><span class="ico">›</span> Sitata</button>
-          <button class="mk-btn" onclick="applyMarkup('stanza')"><span class="ico">✳</span> Bent aýyryjy</button>
+      <div class="ed-left">
+        <div class="draft-bar" id="draftBar">
+          <span style="flex:1;">💾 Ýatda galan taslama tapyldy — dikeltmelimi?</span>
+          <button class="btn btn-ok btn-sm" onclick="restoreDraft()">Dikelt</button>
+          <button class="btn btn-ghost btn-sm" onclick="dropDraft()">Gerek däl</button>
         </div>
-        <div class="mk-hint">Belläp, düwmä basyň. <b>**ýogyn**</b> · <i>*italik*</i> · setir başynda <b>&gt;</b> sitata · aýratyn setirde <b>***</b> bent aýyrýar</div>
-        <textarea id="poemText" class="poem-area" placeholder="Goşgynyň setirlerini şu ýere ýazyň..."></textarea>
+        <div id="poetPickerWrap" class="fl" style="display:none;">
+          <label>Haýsy şahyra?</label>
+          <select id="poemPoetPick" onchange="onPoemPoetPick()"></select>
+        </div>
+        <div class="fl">
+          <label>Goşgynyň ady</label>
+          <input id="poemTitle" type="text" placeholder="Meselem: Türkmeniň" oninput="edChanged()">
+        </div>
+        <div class="fl">
+          <label>Epigraf <span style="font-weight:400;">(hökman däl)</span></label>
+          <input id="poemEpigraph" type="text" placeholder="Goşgynyň öňünden gelýän setir…" oninput="edChanged()">
+        </div>
+        <div class="fl">
+          <label>Razdel (bölüm)</label>
+          <div class="seg">
+            <button id="secm_keep" class="on" onclick="setSectionMode('keep')">Öňküde galsyn</button>
+            <button id="secm_new" onclick="setSectionMode('new')">Täze razdel</button>
+            <button id="secm_none" onclick="setSectionMode('none')">Razdelsiz</button>
+          </div>
+          <div class="sec-input-wrap" id="secInputWrap">
+            <input id="poemSection" type="text" placeholder="Razdeliň ady: Lirika, Rubagylar…" oninput="edChanged()">
+          </div>
+          <div class="mk-hint" id="secHint" style="margin:7px 0 0;"></div>
+        </div>
+        <div class="fl" style="margin-bottom:8px;">
+          <label>Goşgynyň teksti</label>
+          <div class="mk-bar">
+            <button class="mk-btn" onclick="applyMarkup('bold')" title="Saýlanan teksti ýogyn edýär"><span class="ico" style="font-weight:700;">B</span> Ýogyn</button>
+            <button class="mk-btn" onclick="applyMarkup('italic')" title="Saýlanan teksti italik edýär"><span class="ico" style="font-style:italic;">I</span> Italik</button>
+            <button class="mk-btn" onclick="applyMarkup('quote')" title="Setiri sitata görnüşine geçirýär"><span class="ico">›</span> Sitata</button>
+            <button class="mk-btn" onclick="applyMarkup('stanza')" title="Bezegli bent aýyryjy (***) goýýar"><span class="ico">✳</span> Bent aýyryjy</button>
+            <span style="width:1px;background:var(--line);margin:0 3px;"></span>
+            <input type="number" id="stanzaSize" value="4" min="2" max="20" style="width:48px;padding:6px;border:1px solid var(--line);border-radius:8px;font-size:13px;text-align:center;" title="Bir bentdäki setir sany">
+            <button class="mk-btn" onclick="autoStanza()" title="Teksti awtomatik bentlere bölýär">✂ Bentlere böl</button>
+          </div>
+          <textarea id="poemText" class="poem-area" style="min-height:300px;" placeholder="Goşgynyň setirlerini şu ýere ýazyň…&#10;Bentleri boş setir bilen aýyryň." oninput="edChanged()"></textarea>
+          <div class="counter" id="poemCounter"></div>
+          <div class="mk-hint" style="margin-top:7px;">**ýogyn** · *italik* · setir başynda «&gt;» — sitata · aýratyn setirde «***» — bezegli bent aýyryjy. Netijäni gapdaldaky öňsynde dessine görersiňiz.</div>
+        </div>
+        <div class="dup-warn" id="dupWarn"></div>
       </div>
-      <div class="dup-warn" id="dupWarn"></div>
+      <div class="ed-right">
+        <div class="ed-right-label">◉ Janly öňsyn — programmada çykjak görnüşi</div>
+        <div id="poemPreview"></div>
+      </div>
     </div>
     <div class="modal-foot">
-      <div style="display:flex;gap:10px;">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <button class="btn btn-gold" onclick="savePoem()" id="savePoemBtn">Ýatda sakla</button>
         <button class="btn btn-outline" onclick="closePoemEditor()">Ýatyr</button>
+        <span class="foot-keys"><kbd>Ctrl</kbd>+<kbd>S</kbd> sakla · <kbd>Esc</kbd> ýap</span>
       </div>
       <button class="btn btn-danger" id="delPoemBtn" onclick="deletePoem()" style="display:none;">Poz</button>
     </div>
@@ -394,7 +596,7 @@
 
 <!-- ===== BULK POEMS ===== -->
 <div class="overlay" id="bulkOverlay">
-  <div class="modal">
+  <div class="modal modal-xl" id="bulkModal">
     <div class="modal-head">
       <div>
         <h3>Köp goşgy goşmak</h3>
@@ -402,37 +604,56 @@
       </div>
       <button class="btn btn-ghost" onclick="closeBulk()" style="font-size:22px;line-height:1;">×</button>
     </div>
+    <div class="seg ed-tabs">
+      <button id="bt_write" class="on" onclick="setBulkTab(false)">✍ Tekst</button>
+      <button id="bt_view" onclick="setBulkTab(true)">◉ Öňsyn<span id="btCount"></span></button>
+    </div>
     <div class="modal-body">
-      <div id="bulkPickerWrap" class="fl" style="display:none;">
-        <label>Haýsy şahyra?</label>
-        <select id="bulkPoetPick"></select>
-      </div>
-      <div class="fl">
-        <label>Goşgulary ýapyşdyryň (her goşgynyň arasynda <b>===</b> bilen bölüň)</label>
-        <div style="display:flex;gap:8px;margin-bottom:10px;">
-          <input type="file" id="docxFile" accept=".docx" style="display:none;" onchange="handleDocxFile(event)">
-          <button class="btn btn-outline btn-sm" onclick="document.getElementById('docxFile').click()">📄 Word faýlyndan</button>
-          <span id="docxStatus" style="font-size:12px;color:var(--ink-soft);align-self:center;"></span>
+      <div class="ed-left">
+        <div id="bulkPickerWrap" class="fl" style="display:none;">
+          <label>Haýsy şahyra?</label>
+          <select id="bulkPoetPick"></select>
         </div>
-        <div class="mk-hint">Her goşgynyň <b>1-nji setiri = ady</b>, galanlary = teksti. Goşgular <b>===</b> bilen bölünýär.<br>
-<b>Word faýlynda:</b> bentler 1 boş setir bilen, goşgular 2+ boş setir (ýa ===) bilen aýrylmaly. Ýogyn/italik saklanýar.</div>
-        <textarea id="bulkText" style="min-height:280px;font-family:'Playfair Display';font-size:14px;line-height:1.7;" placeholder="Goşgynyň ady
-Goşgynyň teksti 1-nji setir
-2-nji setir
-===
-Ikinji goşgynyň ady
-Ikinji goşgynyň teksti
-==="></textarea>
+        <div class="fl" style="margin-bottom:12px;">
+          <label>Word faýlyndan getirmek</label>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <input type="file" id="docxFile" accept=".docx" style="display:none;" onchange="handleDocxFile(event)">
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('docxFile').click()">📄 Word faýly saýla</button>
+            <span id="docxStatus" style="font-size:12px;color:var(--ink-soft);"></span>
+          </div>
+        </div>
+        <div class="fl" style="margin-bottom:8px;">
+          <label>Ýa-da goşgulary şu ýere ýapyşdyryň</label>
+          <textarea id="bulkText" style="min-height:320px;font-family:'Playfair Display';font-size:14px;line-height:1.7;" oninput="onBulkInput()" placeholder="Birinji goşgynyň ady&#10;Birinji setiri&#10;Ikinji setiri&#10;===&#10;Ikinji goşgynyň ady&#10;Teksti…"></textarea>
+        </div>
+        <div class="mk-hint">Düzgünler: her goşgynyň <b>1-nji setiri — ady</b>, galany — teksti. Goşgular <b>===</b> bilen aýrylýar, bentler — boş setir bilen.<br>Täze razdel açmak üçin goşgynyň iň ýokarsynda: <b>@razdel Lirika</b>. Razdelden çykmak üçin diňe: <b>@razdel</b>.<br>Word faýlynda: bentler 1 boş setir, goşgular 2 boş setir (ýa ===) bilen aýrylmaly — ýogyn/italik saklanýar.</div>
       </div>
-      <div id="bulkPreview" style="display:none;"></div>
-      <div class="dup-warn" id="bulkDupWarn"></div>
+      <div class="ed-right">
+        <div class="ed-right-label">◉ Janly öňsyn — barlaň, düzediň, soň goşuň</div>
+        <div id="bulkPreview"><div class="pv-empty">Tekst ýazylanda goşgular şu ýerde awtomat görkeziler</div></div>
+        <div class="dup-warn" id="bulkDupWarn"></div>
+      </div>
     </div>
     <div class="modal-foot">
-      <div style="display:flex;gap:10px;">
-        <button class="btn btn-outline" onclick="previewBulk()">Öňsyn görkezmek</button>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <button class="btn btn-gold" onclick="saveBulk()" id="saveBulkBtn">Hemmesini goş</button>
+        <button class="btn btn-outline" onclick="closeBulk()">Ýatyr</button>
+        <span class="foot-keys"><kbd>Ctrl</kbd>+<kbd>S</kbd> goş · <kbd>Esc</kbd> ýap</span>
       </div>
-      <button class="btn btn-outline" onclick="closeBulk()">Ýatyr</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TASSYKLAMA MODALY ===== -->
+<div class="overlay" id="cfOverlay" style="z-index:80;">
+  <div class="modal cf-modal">
+    <div class="modal-body" style="padding:26px 24px 22px;">
+      <div class="cf-ico" id="cfIco">⚠️</div>
+      <div class="cf-msg" id="cfMsg"></div>
+      <div class="cf-btns">
+        <button class="btn btn-outline" onclick="cfDone(false)">Ýok, ýatyr</button>
+        <button class="btn btn-gold" id="cfOk" onclick="cfDone(true)">Hawa</button>
+      </div>
     </div>
   </div>
 </div>
@@ -440,6 +661,8 @@ Ikinji goşgynyň teksti
 <script>
 const API = 'https://functions.yandexcloud.net/d4eo3o1jdsg8ed74gccl';
 let auth=null, me=null, poets=[], curPoetId=null, curPoems=[], editingPoemId=null, editingPoetId=null, pickedImagePath=null, poemSort='old', lastPublished=null, catalogVersion=null, needsMigration=false;
+let poetSortMode='era', eraFilter='all', searchMode='poets', poemsCache={}, poemQuery='';
+let edDirty=false, sectionMode='keep', bulkPoems=[], searchTimer=null, draftTimer=null, bulkTimer=null;
 
 function b64(s){ return btoa(unescape(encodeURIComponent(s))); }
 async function api(query, method, body){
@@ -460,6 +683,54 @@ function toast(msg, kind){ const t=document.getElementById('toast'); t.textConte
 function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
 function initial(n){ return (n||'?').trim().charAt(0).toUpperCase(); }
 function stripMk(s){ return (s||'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/^>\s?/gm,'').replace(/^\*\*\*$/gm,'·'); }
+// ---- Türkmen elipbiýiniň hakyky tertibi boýunça deňeşdirme ----
+const TK_ORDER='abçdeäfghijžklmnňoöprsştuüwyýz';
+const TK_RANK={}; TK_ORDER.split('').forEach(function(c,i){ TK_RANK[c]=i; });
+function tkCompare(a,b){
+  a=String(a||'').toLowerCase(); b=String(b||'').toLowerCase();
+  const n=Math.min(a.length,b.length);
+  for(let i=0;i<n;i++){
+    if(a[i]===b[i]) continue;
+    const ra=TK_RANK[a[i]], rb=TK_RANK[b[i]];
+    if(ra!==undefined&&rb!==undefined) return ra-rb;
+    if(ra!==undefined) return -1;
+    if(rb!==undefined) return 1;
+    return a[i]<b[i]?-1:1;
+  }
+  return a.length-b.length;
+}
+// «Ýaşan ýyllary» meýdanyndan doglan ýylyny almak («1724 – 1807» → 1724)
+function birthYearOf(p){ const m=String(p.lifeYears||'').match(/\d{3,4}/); return m?parseInt(m[0],10):99999; }
+// Gözlenen sözi sary bilen bellemek
+function hl(s,q){
+  s=String(s==null?'':s);
+  if(!q) return esc(s);
+  const ls=s.toLowerCase(), lq=q.toLowerCase();
+  let out='', i=0, idx;
+  while((idx=ls.indexOf(lq,i))!==-1){
+    out+=esc(s.slice(i,idx))+'<mark class="hl">'+esc(s.slice(idx,idx+q.length))+'</mark>';
+    i=idx+q.length;
+  }
+  return out+esc(s.slice(i));
+}
+// ---- Owadan tassyklama (brauzeriň confirm-i ýerine) ----
+let cfResolve=null;
+function askConfirm(msg,opts){
+  opts=opts||{};
+  return new Promise(function(res){
+    cfResolve=res;
+    document.getElementById('cfMsg').innerHTML=msg;
+    document.getElementById('cfIco').textContent=opts.icon||(opts.danger?'🗑️':'⚠️');
+    const ok=document.getElementById('cfOk');
+    ok.textContent=opts.okText||'Hawa';
+    ok.className='btn '+(opts.danger?'btn-danger-solid':'btn-gold');
+    document.getElementById('cfOverlay').classList.add('open');
+  });
+}
+function cfDone(v){
+  document.getElementById('cfOverlay').classList.remove('open');
+  if(cfResolve){ const r=cfResolve; cfResolve=null; r(v); }
+}
 
 async function refreshPoets(){
   const poetsData=await api('?action=poets');
@@ -503,6 +774,7 @@ async function doLogin(){
   auth=b64(u+':'+p);
   try{
     me=await api('?action=me');
+    poemsCache={};
     const poetsData=await api('?action=poets');
     // täze gurluş: {poets:[...], lastPublished, version} ýa-da köne: [...]
     if(Array.isArray(poetsData)){ poets=poetsData; lastPublished=null; catalogVersion=null; }
@@ -515,7 +787,7 @@ async function doLogin(){
     document.getElementById('login').style.display='none';
     document.getElementById('app').style.display='block';
     if(me.role==='admin') document.getElementById('tabLog').style.display='flex';
-    renderPoets(); renderWelcome(); loadPending();
+    renderPoets(); renderWelcome(); loadPending(); loadMail();
   }catch(e){
     auth=null;
     // blok ýa-da synanyşyk habary
@@ -534,47 +806,162 @@ function doLogout(){ auth=null; me=null; curPoetId=null; document.body.classList
 
 // ----- TABS -----
 function switchTab(name){
-  ['poets','pending','log'].forEach(t=>{
+  ['poets','notice','hero','mail','pending','log'].forEach(t=>{
     document.getElementById('view'+cap(t)).classList.toggle('active', t===name);
     document.getElementById('tab'+cap(t)).classList.toggle('active', t===name);
   });
   if(name==='log') loadLog();
   if(name==='pending') loadPending();
+  if(name==='notice') loadNoticeForm();
+  if(name==='hero') loadHeroForm();
+  if(name==='mail') loadMail();
 }
 function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
 
 // ----- POETS -----
+// ----- GÖZLEG REŽIMI / SORTIROWKA / FILTR -----
+function setSearchMode(m){
+  searchMode=m;
+  document.getElementById('sm_poets').classList.toggle('on',m==='poets');
+  document.getElementById('sm_poems').classList.toggle('on',m==='poems');
+  document.getElementById('poetTools').style.display = m==='poets' ? 'block' : 'none';
+  const s=document.getElementById('poetSearch');
+  s.placeholder = m==='poets' ? 'Şahyr gözle…' : 'Söz ýa setir ýazyň — ähli goşgularda gözlener…';
+  s.focus();
+  renderPoets();
+}
+function setPoetSort(m){
+  poetSortMode=m;
+  ['era','year','abc'].forEach(function(x){ document.getElementById('so_'+x).classList.toggle('on',x===m); });
+  renderPoets();
+}
+function setEraFilter(v){
+  eraFilter=v;
+  ['all','XVIII_XIX','XX_XXI'].forEach(function(x){ document.getElementById('era_'+x).classList.toggle('on',x===v); });
+  renderPoets();
+}
+function onSearchInput(){
+  if(searchMode==='poems'){
+    clearTimeout(searchTimer);
+    searchTimer=setTimeout(renderPoets,300);
+  } else renderPoets();
+}
+function poetRowHtml(p,q){
+  return '<div class="poet-row'+(p.id===curPoetId?' sel':'')+'" onclick="selectPoet(\''+p.id+'\')">'+
+    '<div class="poet-av" id="av-'+p.id+'"><span>'+initial(p.fullName)+'</span></div>'+
+    '<div class="pinfo"><div class="pn">'+hl(p.fullName,q)+'</div>'+
+    (p.lifeYears?'<div class="py">'+esc(p.lifeYears)+'</div>':'')+
+    '</div><span class="pc">'+(p.poemCount||0)+'</span></div>';
+}
 function renderPoets(){
-  const q=document.getElementById('poetSearch').value.trim().toLowerCase();
-  const filt=poets.filter(p=>p.fullName.toLowerCase().includes(q));
-  const eras={}; filt.forEach(p=>{ const e=p.category||'Başga'; (eras[e]=eras[e]||[]).push(p); });
-  const names={'XVIII_XIX':'XVIII–XIX asyr','XX_XXI':'XX–XXI asyr'};
+  if(searchMode==='poems'){ renderPoemSearch(); return; }
+  const q=document.getElementById('poetSearch').value.trim();
+  let filt=poets.filter(function(p){ return p.fullName.toLowerCase().includes(q.toLowerCase()); });
+  if(eraFilter!=='all') filt=filt.filter(function(p){ return (p.category||'')===eraFilter; });
+  document.getElementById('resCount').textContent = q ? (filt.length+' şahyr tapyldy') : '';
   let html='';
-  Object.keys(eras).sort().forEach(era=>{
-    html+='<div class="era-h">'+(names[era]||era)+'</div>';
-    eras[era].sort((a,b)=>a.sortOrder-b.sortOrder).forEach(p=>{
-      html+='<div class="poet-row'+(p.id===curPoetId?' sel':'')+'" onclick="selectPoet(\''+p.id+'\')">'+
-        '<div class="poet-av" id="av-'+p.id+'"><span>'+initial(p.fullName)+'</span></div>'+
-        '<span class="pn">'+esc(p.fullName)+'</span><span class="pc">'+p.poemCount+'</span></div>';
+  if(poetSortMode==='era'){
+    const eras={}; filt.forEach(function(p){ const e=p.category||'Başga'; (eras[e]=eras[e]||[]).push(p); });
+    const names={'XVIII_XIX':'XVIII–XIX asyr','XX_XXI':'XX–XXI asyr'};
+    Object.keys(eras).sort().forEach(function(era){
+      html+='<div class="era-h">'+(names[era]||era)+'</div>';
+      eras[era].sort(function(a,b){
+        const ya=birthYearOf(a), yb=birthYearOf(b);
+        if(ya!==yb) return ya-yb; // topar içinde doglan ýyly boýunça
+        return tkCompare(a.fullName,b.fullName); // ýyllary deň ýa ýok bolsa — elipbiý boýunça
+      }).forEach(function(p){ html+=poetRowHtml(p,q); });
     });
-  });
-  document.getElementById('poetList').innerHTML=html||'<p style="color:var(--ink-soft);font-size:13px;padding:10px;">Tapylmady</p>';
-  filt.forEach(p=>{ if(p.imagePath) loadImageUrl(p.imagePath,'av-'+p.id); });
+  } else if(poetSortMode==='year'){
+    const known=filt.filter(function(p){ return birthYearOf(p)<99999; }).sort(function(a,b){ return birthYearOf(a)-birthYearOf(b); });
+    const unknown=filt.filter(function(p){ return birthYearOf(p)>=99999; }).sort(function(a,b){ return tkCompare(a.fullName,b.fullName); });
+    known.forEach(function(p){ html+=poetRowHtml(p,q); });
+    if(unknown.length){
+      html+='<div class="era-h">Ýyllary görkezilmedik</div>';
+      unknown.forEach(function(p){ html+=poetRowHtml(p,q); });
+    }
+  } else {
+    filt.slice().sort(function(a,b){ return tkCompare(a.fullName,b.fullName); }).forEach(function(p){ html+=poetRowHtml(p,q); });
+  }
+  document.getElementById('poetList').innerHTML=html||'<p style="color:var(--ink-soft);font-size:13px;padding:10px;">Hiç zat tapylmady</p>';
+  filt.forEach(function(p){ if(p.imagePath) loadImageUrl(p.imagePath,'av-'+p.id); });
+}
+
+// ----- ÄHLI GOŞGULARDA GÖZLEG -----
+async function ensurePoemCache(){
+  const missing=poets.filter(function(p){ return !poemsCache[p.id]; });
+  if(!missing.length) return;
+  const list=document.getElementById('poetList');
+  let done=0;
+  for(const p of missing){
+    list.innerHTML='<div class="hint" style="padding:34px 10px;"><div class="spin" style="margin:0 auto 12px;"></div>Goşgular ýüklenýär… '+done+' / '+missing.length+'<br><span style="font-size:11.5px;">Diňe ilkinji gezek — soň gözleg dessine işlär</span></div>';
+    try{ poemsCache[p.id]=await api('?action=poems&poetId='+encodeURIComponent(p.id)); }
+    catch(e){ poemsCache[p.id]=[]; }
+    done++;
+  }
+}
+function snippetOf(text,q){
+  const plain=stripMk(text);
+  const idx=plain.toLowerCase().indexOf(q.toLowerCase());
+  if(idx===-1) return '';
+  const from=Math.max(0,idx-35), to=Math.min(plain.length,idx+q.length+55);
+  const s=(from>0?'…':'')+plain.slice(from,to)+(to<plain.length?'…':'');
+  return hl(s.replace(/\n+/g,' · '),q);
+}
+async function renderPoemSearch(){
+  const list=document.getElementById('poetList');
+  const cnt=document.getElementById('resCount');
+  const q=document.getElementById('poetSearch').value.trim();
+  if(q.length<2){
+    cnt.textContent='';
+    list.innerHTML='<div class="hint" style="padding:34px 14px;">Azyndan 2 harp ýazyň.<br><span style="font-size:12px;">Ähli şahyrlaryň goşgularynyň ady we teksti boýunça gözlener.</span></div>';
+    return;
+  }
+  await ensurePoemCache();
+  if(document.getElementById('poetSearch').value.trim()!==q) return; // gözleg üýtgän bolsa köne netijäni görkezme
+  const lq=q.toLowerCase(); const res=[];
+  outer:
+  for(const p of poets){
+    for(const pm of (poemsCache[p.id]||[])){
+      const inTitle=stripMk(pm.title||'').toLowerCase().includes(lq);
+      const inText=stripMk(pm.text||'').toLowerCase().includes(lq);
+      if(inTitle||inText){
+        res.push({p:p,pm:pm,inText:inText});
+        if(res.length>=120) break outer;
+      }
+    }
+  }
+  cnt.textContent=res.length ? (res.length+' goşgy tapyldy'+(res.length>=120?' (ilkinji 120-si)':'')) : '';
+  if(!res.length){ list.innerHTML='<p style="color:var(--ink-soft);font-size:13px;padding:10px;">«'+esc(q)+'» boýunça hiç zat tapylmady</p>'; return; }
+  list.innerHTML=res.map(function(r){
+    return '<div class="gs-item" onclick="openFromSearch(\''+r.p.id+'\',\''+r.pm.id+'\')">'+
+      '<div class="gt">'+hl(stripMk(r.pm.title),q)+'</div>'+
+      '<div class="gp">'+esc(r.p.fullName)+'</div>'+
+      (r.inText?'<div class="gx">'+snippetOf(r.pm.text,q)+'</div>':'')+
+    '</div>';
+  }).join('');
+}
+async function openFromSearch(poetId,poemId){
+  await selectPoet(poetId);
+  openPoemEditor(poemId);
 }
 
 async function selectPoet(id){
-  curPoetId=id; renderPoets();
+  curPoetId=id; poemQuery='';
+  if(searchMode==='poets') renderPoets();
   document.body.classList.add('detail-open');
-  const poet=poets.find(p=>p.id===id);
+  const poet=poets.find(function(p){ return p.id===id; });
   const main=document.getElementById('poetMain');
   main.innerHTML='<div class="loader"><div class="spin"></div></div>';
-  try{ curPoems=await api('?action=poems&poetId='+encodeURIComponent(id)); renderPoetMain(poet); }
+  try{
+    curPoems=await api('?action=poems&poetId='+encodeURIComponent(id));
+    poemsCache[id]=curPoems;
+    renderPoetMain(poet);
+  }
   catch(e){ main.innerHTML='<div class="hint">Ýalňyşlyk: '+esc(e.message)+'</div>'; }
 }
 
 function renderPoetMain(poet){
   const canDelPoet = me.role==='admin';
-  const editorDel = me.role!=='admin';
   let html='<button class="back-btn" onclick="backToList()">‹ Şahyrlar</button>';
   html+='<div class="card poet-hero">'+
     '<div class="big-av" id="heroAv">'+initial(poet.fullName)+'</div>'+
@@ -584,6 +971,7 @@ function renderPoetMain(poet){
       '<div class="bio">'+esc(poet.bio||'')+'</div>'+
     '</div>'+
     '<div class="acts">'+
+      '<button class="btn btn-ok btn-sm" onclick="doPublishPoet(\''+poet.id+'\')">Neşir et</button>'+
       '<button class="btn btn-outline btn-sm" onclick="openPoetEditor(\''+poet.id+'\')">Üýtget</button>'+
       '<button class="btn btn-danger btn-sm" onclick="deletePoetById(\''+poet.id+'\')">'+(canDelPoet?'Poz':'Poz teklip')+'</button>'+
     '</div></div>';
@@ -596,10 +984,35 @@ function renderPoetMain(poet){
       '<button class="btn btn-gold btn-sm" onclick="openPoemEditor(null)">+ Täze goşgy</button>'+
       '<button class="btn btn-outline btn-sm" onclick="openBulk()">+ Köp goşgy</button>'+
     '</div></div>';
-  if(curPoems.length===0){ html+='<div class="hint">Entek goşgy ýok</div>'; }
+  if(curPoems.length>0){
+    html+='<input class="search-box" id="poemSearch" placeholder="Şu şahyryň goşgularynda gözle… (ady we teksti)" value="'+esc(poemQuery).replace(/"/g,'&quot;')+'" oninput="onPoemQuery(this)">';
+  }
+  const q=poemQuery.trim();
+  if(q){
+    const lq=q.toLowerCase();
+    const found=curPoems.filter(function(pm){
+      return stripMk(pm.title||'').toLowerCase().includes(lq) || stripMk(pm.text||'').toLowerCase().includes(lq);
+    });
+    html+='<div class="res-count" style="margin:4px 4px 10px;">'+found.length+' goşgy tapyldy</div>';
+    if(!found.length) html+='<div class="hint" style="padding:34px;">«'+esc(q)+'» boýunça tapylmady</div>';
+    found.forEach(function(pm){
+      const sn=snippetOf(pm.text,q);
+      html+='<div class="poem-item" onclick="openPoemEditor(\''+pm.id+'\')">'+
+        '<div class="pt">'+hl(stripMk(pm.title),q)+'</div>'+
+        '<div class="pe">'+(sn||esc(stripMk(pm.text).slice(0,130)))+'</div></div>';
+    });
+  } else if(curPoems.length===0){ html+='<div class="hint">Bu şahyryň entek goşgusy ýok — «+ Täze goşgy» ýa «+ Köp goşgy» bilen goşup bilersiňiz</div>'; }
   else{
-    const sorted=curPoems.slice().sort((a,b)=> poemSort==='old' ? (a.sortOrder||0)-(b.sortOrder||0) : (b.sortOrder||0)-(a.sortOrder||0));
-    sorted.forEach(pm=>{
+    const sorted=curPoems.slice().sort(function(a,b){ return poemSort==='old' ? (a.sortOrder||0)-(b.sortOrder||0) : (b.sortOrder||0)-(a.sortOrder||0); });
+    let activeSec=null;
+    sorted.forEach(function(pm){
+      const raw=pm.section;
+      if(raw!=null && String(raw).trim()===''){
+        activeSec=null;
+      } else if(raw!=null && String(raw).trim()!=='' && String(raw).trim()!==activeSec){
+        activeSec=String(raw).trim();
+        html+='<div class="era-h">'+esc(activeSec)+'</div>';
+      }
       html+='<div class="poem-item" onclick="openPoemEditor(\''+pm.id+'\')">'+
         '<div class="pt">'+esc(stripMk(pm.title))+'</div>'+
         '<div class="pe">'+esc(stripMk(pm.text).slice(0,130))+'</div></div>';
@@ -607,6 +1020,15 @@ function renderPoetMain(poet){
   }
   document.getElementById('poetMain').innerHTML=html;
   if(poet.imagePath) loadImageUrl(poet.imagePath,'heroAv');
+}
+function onPoemQuery(el){
+  const pos=el.selectionStart;
+  poemQuery=el.value;
+  const poet=poets.find(function(p){ return p.id===curPoetId; });
+  if(!poet) return;
+  renderPoetMain(poet);
+  const el2=document.getElementById('poemSearch');
+  if(el2){ el2.focus(); el2.setSelectionRange(pos,pos); }
 }
 function goHome(){
   curPoetId=null;
@@ -641,7 +1063,9 @@ function renderDashboard(){
 
   let publishBtn = '';
   if(!needsMigration){
-    publishBtn = '<button class="btn-publish" onclick="doPublish()"'+(needsPublish?'':' disabled')+'>📤 Neşir et</button>';
+    publishBtn = '<button class="btn-publish" onclick="doPublish()"'+(needsPublish?'':' disabled')+'>📤 Ähli neşir et</button>'+
+      '<button class="btn btn-outline btn-sm" onclick="switchTab(\'notice\')">Bildiriş</button>'+
+      '<button class="btn btn-outline btn-sm" onclick="switchTab(\'hero\')">Baş slaýd</button>';
   }
 
   el.innerHTML =
@@ -657,7 +1081,7 @@ function markChanged(){ hasChanges=true; renderDashboard(); }
 function renderWelcome(){ renderDashboard(); }
 
 async function doMigrate(){
-  if(!confirm('catalog.json-y kiçi faýllara bölmek? (bir gezeklik, yzyna gaýdyp bolmaýar)')) return;
+  if(!await askConfirm('catalog.json kiçi faýllara bölünsinmi?<br><span style="font-size:12px;color:var(--ink-soft);">Bir gezeklik amal — yzyna gaýtarylmaýar.</span>',{okText:'Hawa, böl',icon:'⚡'})) return;
   toast('Migrasiýa başlady...');
   try{
     const r=await api('?action=migrate','POST',{});
@@ -668,7 +1092,7 @@ async function doMigrate(){
 }
 
 async function doPublish(){
-  if(!confirm('Ähli üýtgeşmeleri neşir edip, Flutter üçin catalog.json täzelensinmi?')) return;
+  if(!await askConfirm('Üýtgedilen ähli şahyrlar programma çykarylsynmy?',{okText:'Hawa, neşir et',icon:'📤'})) return;
   toast('Neşir edilýär...');
   try{
     const r=await api('?action=publish','POST',{});
@@ -679,115 +1103,660 @@ async function doPublish(){
     renderDashboard();
   }catch(e){ toast(e.message,'err'); }
 }
+
+async function doPublishPoet(poetId){
+  const poet=poets.find(p=>p.id===poetId);
+  const name=poet?poet.fullName:'Şu şahyr';
+  if(!await askConfirm('«'+esc(name)+'» üçin üýtgeşmeler programma çykarylsynmy?',{okText:'Hawa, neşir et',icon:'📤'})) return;
+  toast('Neşir edilýär...');
+  try{
+    const r=await api('?action=publishPoet','POST',{ poetId:poetId });
+    toast((r.fullName||name)+' neşir edildi · '+(r.poemCount||0)+' goşgy','ok');
+    lastPublished=new Date().toISOString();
+    hasChanges=false;
+    renderDashboard();
+  }catch(e){ toast(e.message,'err'); }
+}
+
+async function loadNoticeForm(){
+  const last=document.getElementById('noticeLast');
+  if(!last) return;
+  last.textContent='';
+  try{
+    const r=await api('?action=notice');
+    const n=r.notice;
+    if(n && n.cleared){
+      last.textContent='Häzirki bildiriş ýok (aýrylan)';
+    } else if(n&&(n.title||n.body)){
+      last.textContent='Häzirki: «'+(n.title||'')+'»';
+      if(!document.getElementById('noticeTitle').value) document.getElementById('noticeTitle').value=n.title||'';
+    }
+  }catch(e){}
+}
+
+async function sendNotice(){
+  const title=(document.getElementById('noticeTitle').value||'').trim();
+  const body=(document.getElementById('noticeBody').value||'').trim();
+  if(!title&&!body){ toast('Sözbaşy ýa tekst ýaz','err'); return; }
+  const btn=document.getElementById('noticeSendBtn');
+  btn.disabled=true;
+  try{
+    const r=await api('?action=notice','POST',{ title:title, body:body });
+    toast('Bildiriş iberildi: '+(r.notice&&r.notice.title?r.notice.title:title),'ok');
+    document.getElementById('noticeBody').value='';
+    loadNoticeForm();
+  }catch(e){ toast(e.message,'err'); }
+  btn.disabled=false;
+}
+
+async function clearNotice(){
+  if(!await askConfirm('Häzirki bildiriş programmadan aýrylsynmy?',{okText:'Hawa, aýyr',icon:'📢'})) return;
+  const btn=document.getElementById('noticeClearBtn');
+  if(btn) btn.disabled=true;
+  try{
+    await api('?action=notice','POST',{ clear:true });
+    document.getElementById('noticeTitle').value='';
+    document.getElementById('noticeBody').value='';
+    toast('Bildiriş aýryldy','ok');
+    loadNoticeForm();
+  }catch(e){ toast(e.message,'err'); }
+  if(btn) btn.disabled=false;
+}
+
+let heroSlides=[];
+
+function pad2(n){ return String(n).padStart(2,'0'); }
+function toLocalInput(iso){
+  if(!iso) return '';
+  const d=new Date(iso);
+  if(isNaN(d.getTime())) return '';
+  return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+'T'+pad2(d.getHours())+':'+pad2(d.getMinutes());
+}
+function fromLocalInput(s){
+  if(!s) return '';
+  const d=new Date(s);
+  return isNaN(d.getTime()) ? '' : d.toISOString();
+}
+function heroStatus(s){
+  if(s.enabled===false) return {cls:'off', t:'Öçürilen'};
+  const now=Date.now();
+  const from=s.from?new Date(s.from).getTime():0;
+  const until=s.until?new Date(s.until).getTime():Infinity;
+  if(from && now<from) return {cls:'wait', t:'Garaşýar'};
+  if(until!==Infinity && now>=until) return {cls:'done', t:'Gutardy'};
+  return {cls:'live', t:'Görünýär'};
+}
+function heroKindLabel(s){
+  const k=String((s&&(s.kindLabel||s.kind))||'').trim();
+  const low=k.toLowerCase();
+  if(!k||low==='notice') return 'BILDIRIŞ';
+  if(low==='news') return 'TÄZELIK';
+  if(low==='promo'||low==='ad') return 'REKLAMA';
+  return k;
+}
+function collectHeroFromDom(requireTitle){
+  const cards=document.querySelectorAll('#heroList .hero-card');
+  const out=[];
+  cards.forEach((card,i)=>{
+    const title=(card.querySelector('[data-f=title]')?.value||'').trim();
+    if(requireTitle && !title) return;
+    let extra=[];
+    try{ extra=JSON.parse(decodeURIComponent(card.getAttribute('data-images')||'%5B%5D')); }catch(e){ extra=[]; }
+    if(!Array.isArray(extra)) extra=[];
+    out.push({
+      id: card.getAttribute('data-id')||('hero-'+Date.now()+'-'+i),
+      kind: (card.querySelector('[data-f=kind]')?.value||'').trim()||'BILDIRIŞ',
+      kindLabel: (card.querySelector('[data-f=kind]')?.value||'').trim()||'BILDIRIŞ',
+      title: title,
+      teaser: (card.querySelector('[data-f=teaser]')?.value||'').trim(),
+      subtitle: (card.querySelector('[data-f=teaser]')?.value||'').trim(),
+      body: (card.querySelector('[data-f=body]')?.value||'').trim(),
+      cta: (card.querySelector('[data-f=cta]')?.value||'Oka →').trim()||'Oka →',
+      linkType: card.querySelector('[data-f=linkType]')?.value||'article',
+      poetId: (card.querySelector('[data-f=poetId]')?.value||'').trim(),
+      poemId: (card.querySelector('[data-f=poemId]')?.value||'').trim(),
+      url: (card.querySelector('[data-f=url]')?.value||'').trim(),
+      image: (card.getAttribute('data-image')||'').trim(),
+      imageLayout: card.querySelector('[data-f=imageLayout]')?.value||'fill',
+      images: extra,
+      detailType: card.querySelector('[data-f=detailType]')?.value||'short',
+      from: fromLocalInput(card.querySelector('[data-f=from]')?.value||''),
+      until: fromLocalInput(card.querySelector('[data-f=until]')?.value||''),
+      enabled: !!(card.querySelector('[data-f=enabled]')?.checked),
+      order: i,
+    });
+  });
+  return out;
+}
+function applyHeroDuration(btn, hours){
+  const card=btn.closest('.hero-card');
+  if(!card) return;
+  const fromEl=card.querySelector('[data-f=from]');
+  const untilEl=card.querySelector('[data-f=until]');
+  const from=fromEl.value?new Date(fromEl.value):new Date();
+  fromEl.value=toLocalInput(from.toISOString());
+  untilEl.value=toLocalInput(new Date(from.getTime()+hours*3600000).toISOString());
+}
+function addHeroSlide(){
+  heroSlides=collectHeroFromDom();
+  const now=new Date();
+  heroSlides.push({
+    id:'hero-'+Date.now(),
+    kind:'BILDIRIŞ',
+    title:'',
+    subtitle:'',
+    teaser:'',
+    body:'',
+    cta:'Oka →',
+    linkType:'article',
+    poetId:'',
+    poemId:'',
+    url:'',
+    image:'',
+    imageLayout:'fill',
+    images:[],
+    detailType:'short',
+    from: now.toISOString(),
+    until: new Date(now.getTime()+24*3600000).toISOString(),
+    enabled:true,
+    order: heroSlides.length,
+  });
+  renderHeroList();
+}
+function removeHeroSlide(id){
+  heroSlides=collectHeroFromDom().filter(s=>s.id!==id);
+  renderHeroList();
+}
+function renderHeroList(){
+  const wrap=document.getElementById('heroList');
+  if(!wrap) return;
+  const live=heroSlides.filter(s=>heroStatus(s).cls==='live');
+  const warn=document.getElementById('heroLiveWarn');
+  if(warn){
+    if(live.length>2){
+      warn.style.display='block';
+      warn.textContent='Häzir '+live.length+' slaýd işjeň. Programma diňe ilkinji 2-sini görkezýär (günüň goşgusyndan soň).';
+    } else warn.style.display='none';
+  }
+  if(!heroSlides.length){
+    wrap.innerHTML='<div class="hint">Heniz slaýd ýok. «Slaýd goş» basyň — günüň goşgusy özbaşdak galýar.</div>';
+    return;
+  }
+  wrap.innerHTML=heroSlides.map((s,i)=>{
+    const st=heroStatus(s);
+    const link=s.linkType||'article';
+    const extras=Array.isArray(s.images)?s.images:[];
+    const layout=s.imageLayout==='side'?'side':'fill';
+    const detail=s.detailType==='long'?'long':'short';
+    return '<div class="card hero-card" data-id="'+esc(s.id)+'" data-image="'+esc(s.image||'')+'" data-images="'+encodeURIComponent(JSON.stringify(extras))+'">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;">'+
+        '<div class="serif" style="font-size:16px;font-weight:600;">Slaýd '+(i+1)+'</div>'+
+        '<span class="hero-status '+st.cls+'">'+st.t+'</span>'+
+      '</div>'+
+      '<div class="fl-row">'+
+        '<div class="fl"><label>Kartadaky bellik (erkin ýaz)</label><input data-f="kind" type="text" maxlength="40" value="'+esc(heroKindLabel(s))+'" placeholder="Meselem: Reklama, Bäsleşik, Ýatlatma"></div>'+
+        '<div class="fl"><label>Düwme</label><input data-f="cta" type="text" value="'+esc(s.cta||'Oka →')+'"></div>'+
+      '</div>'+
+      '<div class="fl"><label>Sözbaşy (kartada)</label><input data-f="title" type="text" value="'+esc(s.title||'')+'" placeholder="Meselem: Magtymguly Pyragy"></div>'+
+      '<div class="fl"><label>Gysga tekst (kartada görünýär)</label><textarea data-f="teaser" placeholder="Bir-iki setir: aradan çykdy, bäsleşik, täze kitap..." style="min-height:72px;">'+esc(s.teaser||s.subtitle||'')+'</textarea></div>'+
+      '<div class="fl"><label>Doly tekst (okam sahypasy)</label><textarea data-f="body" placeholder="Giňişleýin maglumat. Ulanyjy kartany basanda okap biler." style="min-height:140px;">'+esc(s.body||'')+'</textarea></div>'+
+      '<div class="fl-row">'+
+        '<div class="fl"><label>Okam sahypasy</label>'+
+          '<select data-f="detailType">'+
+            '<option value="short"'+(detail==='short'?' selected':'')+'>Gysga</option>'+
+            '<option value="long"'+(detail==='long'?' selected':'')+'>Giňişleýin</option>'+
+          '</select></div>'+
+        '<div class="fl"><label>Surat nähili dursun</label>'+
+          '<select data-f="imageLayout">'+
+            '<option value="fill"'+(layout==='fill'?' selected':'')+'>Kartany doldur</option>'+
+            '<option value="side"'+(layout==='side'?' selected':'')+'>Sag tarap</option>'+
+          '</select></div>'+
+      '</div>'+
+      '<div class="fl"><label>Esasy surat</label>'+
+        '<div id="heroPrev-'+esc(s.id)+'" class="hero-img-prev">'+(s.image?'<span style="font-size:12px;color:var(--ink-soft);">Surat bar</span>':'<span style="font-size:12px;color:var(--ink-soft);">Heniz surat ýok</span>')+'</div>'+
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">'+
+          '<button type="button" class="btn btn-outline btn-sm" onclick="pickHeroImage(\''+esc(s.id)+'\',false)">Surat ýükle</button>'+
+          '<button type="button" class="btn btn-outline btn-sm" onclick="pickHeroImage(\''+esc(s.id)+'\',true)">Goşmaça surat</button>'+
+          (s.image?'<button type="button" class="btn btn-ghost btn-sm" onclick="clearHeroImage(\''+esc(s.id)+'\')">Esasyny aýyr</button>':'')+
+        '</div></div>'+
+      '<div class="fl"><label>Basylanda nire gitmeli</label>'+
+        '<select data-f="linkType" onchange="toggleHeroLinkFields(this)">'+
+          '<option value="article"'+(link==='article'?' selected':'')+'>Habar sahypasy (gysga / giňişleýin)</option>'+
+          '<option value="featured"'+(link==='featured'?' selected':'')+'>Tapawutlandyrylan şygyrlar</option>'+
+          '<option value="dictionary"'+(link==='dictionary'?' selected':'')+'>Sözlük</option>'+
+          '<option value="changelog"'+(link==='changelog'?' selected':'')+'>Katalog täzelikleri</option>'+
+          '<option value="poet"'+(link==='poet'?' selected':'')+'>Şahyr sahypasy</option>'+
+          '<option value="poem"'+(link==='poem'?' selected':'')+'>Goşgy</option>'+
+          '<option value="url"'+(link==='url'?' selected':'')+'>Daşarky baglanyşyk</option>'+
+        '</select></div>'+
+      '<div class="fl-row hero-link-extra" data-show="poet poem" style="'+(link==='poet'||link==='poem'?'':'display:none;')+'">'+
+        '<div class="fl"><label>Şahyr ID</label><input data-f="poetId" type="text" value="'+esc(s.poetId||'')+'" placeholder="p1"></div>'+
+        '<div class="fl hero-link-extra" data-show="poem" style="'+(link==='poem'?'':'display:none;')+'"><label>Goşgy ID</label><input data-f="poemId" type="text" value="'+esc(s.poemId||'')+'"></div>'+
+      '</div>'+
+      '<div class="fl hero-link-extra" data-show="url" style="'+(link==='url'?'':'display:none;')+'">'+
+        '<label>URL</label><input data-f="url" type="url" value="'+esc(s.url||'')+'" placeholder="https://...">'+
+      '</div>'+
+      '<div class="fl"><label>Näçe wagt dursun</label>'+
+        '<div>'+
+          '<button type="button" class="dur-chip" onclick="applyHeroDuration(this,1)">1 sagat</button>'+
+          '<button type="button" class="dur-chip" onclick="applyHeroDuration(this,6)">6 sagat</button>'+
+          '<button type="button" class="dur-chip" onclick="applyHeroDuration(this,24)">1 gün</button>'+
+          '<button type="button" class="dur-chip" onclick="applyHeroDuration(this,72)">3 gün</button>'+
+          '<button type="button" class="dur-chip" onclick="applyHeroDuration(this,168)">1 hepde</button>'+
+          '<button type="button" class="dur-chip" onclick="applyHeroDuration(this,720)">1 aý</button>'+
+        '</div></div>'+
+      '<div class="fl-row">'+
+        '<div class="fl"><label>Başlaýar</label><input data-f="from" type="datetime-local" value="'+toLocalInput(s.from)+'"></div>'+
+        '<div class="fl"><label>Gutarýar</label><input data-f="until" type="datetime-local" value="'+toLocalInput(s.until)+'"></div>'+
+      '</div>'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">'+
+        '<label style="display:flex;align-items:center;gap:8px;font-size:13px;"><input data-f="enabled" type="checkbox"'+(s.enabled!==false?' checked':'')+'> Görkez</label>'+
+        '<button type="button" class="btn btn-danger btn-sm" onclick="removeHeroSlide(\''+esc(s.id)+'\')">Poz</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  hydrateHeroImages();
+}
+function toggleHeroLinkFields(sel){
+  const card=sel.closest('.hero-card');
+  if(!card) return;
+  const v=sel.value;
+  card.querySelectorAll('.hero-link-extra').forEach(el=>{
+    const show=(el.getAttribute('data-show')||'').split(/\s+/);
+    el.style.display=show.indexOf(v)>=0?'':'none';
+  });
+}
+let heroImgTargetId=null;
+let heroImgExtra=false;
+function publicHeroImagePath(p){
+  const t=String(p||'').trim();
+  if(!t) return '';
+  if(/^https?:\/\//i.test(t)) return t;
+  const name=t.split('/').pop();
+  return name ? '/images/'+name : t;
+}
+function pickHeroImage(id, extra){
+  heroImgTargetId=id;
+  heroImgExtra=!!extra;
+  const inp=document.getElementById('heroImgFile');
+  if(!inp) return;
+  inp.value='';
+  inp.onchange=onHeroImagePicked;
+  inp.click();
+}
+async function onHeroImagePicked(ev){
+  const file=ev.target.files&&ev.target.files[0];
+  if(!file||!heroImgTargetId) return;
+  heroSlides=collectHeroFromDom();
+  const reader=new FileReader();
+  reader.onload=async()=>{
+    const base64=String(reader.result).split(',')[1];
+    toast('Surat ýüklenýär...');
+    try{
+      const r=await api('?action=image','POST',{ filename:file.name, dataBase64:base64 });
+      const path=publicHeroImagePath(r.imagePath);
+      const s=heroSlides.find(x=>x.id===heroImgTargetId);
+      if(s){
+        if(heroImgExtra){
+          s.images=Array.isArray(s.images)?s.images:[];
+          s.images.push(path);
+        } else {
+          s.image=path;
+        }
+      }
+      toast(heroImgExtra?'Goşmaça surat goýuldy':'Surat goýuldy','ok');
+      renderHeroList();
+    }catch(e){ toast('Surat ýüklenmedi: '+e.message,'err'); }
+  };
+  reader.readAsDataURL(file);
+}
+function clearHeroImage(id){
+  heroSlides=collectHeroFromDom();
+  const s=heroSlides.find(x=>x.id===id);
+  if(s) s.image='';
+  renderHeroList();
+}
+async function hydrateHeroImages(){
+  const cards=document.querySelectorAll('#heroList .hero-card');
+  for(const card of cards){
+    const id=card.getAttribute('data-id');
+    const img=(card.getAttribute('data-image')||'').trim();
+    const prev=document.getElementById('heroPrev-'+id);
+    if(!prev) continue;
+    if(!img) continue;
+    if(/^https?:\/\//i.test(img)){
+      prev.innerHTML='<img src="'+img+'" alt="">';
+      continue;
+    }
+    try{
+      if(typeof loadImageUrl==='function'){
+        await loadImageUrl(img, 'heroPrev-'+id);
+      }
+    }catch(e){}
+  }
+}
+async function loadHeroForm(){
+  try{
+    const r=await api('?action=homeHero');
+    const slides=(r.hero&&r.hero.slides)?r.hero.slides:[];
+    heroSlides=Array.isArray(slides)?slides:[];
+  }catch(e){ heroSlides=heroSlides||[]; }
+  renderHeroList();
+}
+async function saveHeroSlides(){
+  const btn=document.getElementById('heroSaveBtn');
+  const all=collectHeroFromDom(false);
+  const ready=all.filter(s=>!!s.title);
+  if(all.length && ready.length!==all.length){
+    toast('Her slaýda sözbaşy ýazyň (kartada görünýän at)','err');
+    return;
+  }
+  heroSlides=ready;
+  if(btn){ btn.disabled=true; btn.textContent='Ýazdyrylýar…'; }
+  try{
+    await api('?action=homeHero','POST',{ slides: heroSlides });
+    toast('Slaýdlar ýazdyryldy. Programma açylanda görünýär.','ok');
+    await loadHeroForm();
+  }catch(e){ toast(e.message||'Iberip bolmady','err'); }
+  if(btn){ btn.disabled=false; btn.textContent='Ýazdyr (app-a iber)'; }
+}
+
+async function doMakeBackup(){
+  if(!await askConfirm('Häzirki goşgulardan ätiýaçlyk nusga alynsynmy?',{okText:'Hawa, al',icon:'💾'})) return;
+  toast('Ätiýaçlyk alynýar...');
+  try{
+    const r=await api('?action=backup','POST',{});
+    toast('Ätiýaçlyk alındy · '+(r.poemCount||0)+' goşgy','ok');
+    loadBackups();
+  }catch(e){ toast(e.message,'err'); }
+}
 function changeSort(v){ poemSort=v; const poet=poets.find(p=>p.id===curPoetId); if(poet) renderPoetMain(poet); }
 
 // ----- POEM EDITOR -----
+// ================= GOŞGY REDAKTORY =================
+const DRAFT_KEY='bulakPoemDraft';
+
+function setEdTab(showPv){
+  document.getElementById('poemModal').classList.toggle('show-pv',showPv);
+  document.getElementById('pt_write').classList.toggle('on',!showPv);
+  document.getElementById('pt_view').classList.toggle('on',showPv);
+  if(showPv) updatePoemPreview();
+}
+function setSectionMode(m,silent){
+  sectionMode=m;
+  ['keep','new','none'].forEach(function(x){ document.getElementById('secm_'+x).classList.toggle('on',x===m); });
+  document.getElementById('secInputWrap').classList.toggle('show',m==='new');
+  const hints={
+    keep:'Goşgy öňünden gelýän razdelde galar (razdel ýok bolsa — umumy sanawda).',
+    new:'Şu goşgudan täze bölüm başlar. Şol bölümdäki indiki goşgulara gaýtadan ýazmak hökman däl.',
+    none:'Şu goşgudan başlap razdel ýatyrylar — indiki goşgular sözbaşysyz, umumy sanawda durar.'
+  };
+  document.getElementById('secHint').textContent=hints[m];
+  if(!silent){
+    if(m==='new') document.getElementById('poemSection').focus();
+    edChanged();
+  }
+}
+function poemSectionPayload(){
+  if(sectionMode==='none') return '';
+  if(sectionMode==='keep') return null;
+  const v=document.getElementById('poemSection').value.trim();
+  return v==='' ? null : v;
+}
+
+// ----- Taslama (awto-ýatda saklama) -----
+function edChanged(){
+  edDirty=true;
+  updatePoemPreview();
+  clearTimeout(draftTimer);
+  draftTimer=setTimeout(saveDraft,700);
+}
+function saveDraft(){
+  try{
+    const d={ poetId:curPoetId||null, poemId:editingPoemId||null,
+      title:document.getElementById('poemTitle').value,
+      epigraph:document.getElementById('poemEpigraph').value,
+      sectionMode:sectionMode, sectionVal:document.getElementById('poemSection').value,
+      text:document.getElementById('poemText').value, ts:Date.now() };
+    if(d.title.trim()||d.text.trim()) localStorage.setItem(DRAFT_KEY,JSON.stringify(d));
+  }catch(e){}
+}
+function getDraft(){ try{ return JSON.parse(localStorage.getItem(DRAFT_KEY)||'null'); }catch(e){ return null; } }
+function clearDraft(){ try{ localStorage.removeItem(DRAFT_KEY); }catch(e){} }
+function restoreDraft(){
+  const d=getDraft(); if(!d) return;
+  document.getElementById('poemTitle').value=d.title||'';
+  document.getElementById('poemEpigraph').value=d.epigraph||'';
+  document.getElementById('poemSection').value=d.sectionVal||'';
+  setSectionMode(d.sectionMode||'keep',true);
+  document.getElementById('poemText').value=d.text||'';
+  document.getElementById('draftBar').classList.remove('show');
+  edDirty=true;
+  updatePoemPreview();
+  toast('Taslama dikeldildi','ok');
+}
+function dropDraft(){ clearDraft(); document.getElementById('draftBar').classList.remove('show'); }
+
+// ----- Janly öňsyn -----
+function mkToHtml(srcText){
+  const lines=String(srcText||'').split('\n');
+  const out=[]; let stanza=[];
+  function flush(){ if(stanza.length){ out.push('<div class="pv-st">'+stanza.join('<br>')+'</div>'); stanza=[]; } }
+  for(const ln of lines){
+    const t=ln.trim();
+    if(t===''){ flush(); continue; }
+    if(t==='***'){ flush(); out.push('<div class="pv-div">✳ ✳ ✳</div>'); continue; }
+    let quote=false, s=ln;
+    if(/^>\s?/.test(t)){ quote=true; s=t.replace(/^>\s?/,''); }
+    let h=esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>');
+    stanza.push(quote?'<span class="pv-q">'+h+'</span>':h);
+  }
+  flush();
+  return out.join('');
+}
+function updatePoemPreview(){
+  const title=document.getElementById('poemTitle').value.trim();
+  const epi=document.getElementById('poemEpigraph').value.trim();
+  const text=document.getElementById('poemText').value;
+  const sec=sectionMode==='new'?document.getElementById('poemSection').value.trim():'';
+  const pv=document.getElementById('poemPreview');
+  const cnt=document.getElementById('poemCounter');
+  if(!title&&!text.trim()){
+    pv.innerHTML='<div class="pv-empty">Ýazyp başlaň — goşgynyň taýýar görnüşi şu ýerde dessine görkeziler ✨</div>';
+    cnt.textContent='';
+    return;
+  }
+  let html='';
+  if(sec) html+='<div class="pv-sec">'+esc(sec)+'</div>';
+  html+='<div class="pv-title">'+(title?esc(title):'<span style="opacity:.35;">Ady ýazylmadyk</span>')+'</div>';
+  if(epi) html+='<div class="pv-epi">'+esc(epi)+'</div>';
+  html+='<div class="pv-body">'+mkToHtml(text)+'</div>';
+  pv.innerHTML=html;
+  // hasaplaýjy: setir · bent · harp
+  const lines=text.split('\n').map(function(l){ return l.trim(); }).filter(function(l){ return l&&l!=='***'; }).length;
+  let st=0, inSt=false;
+  text.split('\n').forEach(function(l){
+    const t=l.trim();
+    if(t===''||t==='***'){ inSt=false; }
+    else if(!inSt){ st++; inSt=true; }
+  });
+  cnt.textContent = lines ? (lines+' setir · '+st+' bent · '+text.length+' harp') : '';
+}
+
+// ----- Açmak / ýapmak -----
 function openPoemEditor(poemId){
   editingPoemId=poemId;
-  document.getElementById('dupWarn').className='dup-warn';
+  const dw=document.getElementById('dupWarn'); dw.className='dup-warn'; dw.innerHTML='';
   const pickerWrap=document.getElementById('poetPickerWrap');
   const forPoet=document.getElementById('poemForPoet');
   const del=document.getElementById('delPoemBtn');
 
   if(curPoetId){
-    // şahyr sahypasyndan açyldy → awtor awtomatik
     pickerWrap.style.display='none';
-    const poet=poets.find(p=>p.id===curPoetId);
+    const poet=poets.find(function(p){ return p.id===curPoetId; });
     forPoet.textContent = poet ? poet.fullName : '';
     forPoet.style.display='block';
   } else {
-    // esasy menýudan → şahyr saýlatmaly
     pickerWrap.style.display='block';
     forPoet.style.display='none';
     fillPoetPicker();
   }
 
   if(poemId){
-    const pm=curPoems.find(p=>p.id===poemId);
+    const pm=curPoems.find(function(p){ return p.id===poemId; });
+    if(!pm){ toast('Goşgy tapylmady','err'); return; }
     document.getElementById('poemModalTitle').textContent='Goşgyny üýtgetmek';
     document.getElementById('poemTitle').value=pm.title||'';
     document.getElementById('poemEpigraph').value=pm.epigraph||'';
+    if(pm.section!=null && String(pm.section).trim()===''){
+      document.getElementById('poemSection').value='';
+      setSectionMode('none',true);
+    } else if(pm.section!=null){
+      document.getElementById('poemSection').value=String(pm.section);
+      setSectionMode('new',true);
+    } else {
+      document.getElementById('poemSection').value='';
+      setSectionMode('keep',true);
+    }
     document.getElementById('poemText').value=pm.text||'';
     del.style.display='inline-block';
   } else {
     document.getElementById('poemModalTitle').textContent='Täze goşgy';
     document.getElementById('poemTitle').value='';
     document.getElementById('poemEpigraph').value='';
+    document.getElementById('poemSection').value='';
+    setSectionMode('keep',true);
     document.getElementById('poemText').value='';
     del.style.display='none';
   }
+  edDirty=false;
+  setEdTab(false);
+  updatePoemPreview();
+  // ýatda galan taslama barmy?
+  const d=getDraft();
+  const match = d && (d.poetId||null)===(curPoetId||null) && (d.poemId||null)===(poemId||null);
+  document.getElementById('draftBar').classList.toggle('show', !!match);
   document.getElementById('poemOverlay').classList.add('open');
+  if(!poemId) setTimeout(function(){ document.getElementById('poemTitle').focus(); },60);
 }
 function fillPoetPicker(){
   const sel=document.getElementById('poemPoetPick');
-  const sorted=poets.slice().sort((a,b)=>a.fullName.localeCompare(b.fullName));
-  sel.innerHTML='<option value="">— Şahyr saýlaň —</option>'+sorted.map(p=>'<option value="'+p.id+'">'+esc(p.fullName)+'</option>').join('');
+  const sorted=poets.slice().sort(function(a,b){ return tkCompare(a.fullName,b.fullName); });
+  sel.innerHTML='<option value="">— Şahyr saýlaň —</option>'+sorted.map(function(p){ return '<option value="'+p.id+'">'+esc(p.fullName)+'</option>'; }).join('');
 }
 async function onPoemPoetPick(){
   const id=document.getElementById('poemPoetPick').value;
-  if(id){ curPoetId=id; curPoems=await api('?action=poems&poetId='+encodeURIComponent(id)); }
+  if(id){
+    curPoetId=id;
+    curPoems=await api('?action=poems&poetId='+encodeURIComponent(id));
+    poemsCache[id]=curPoems;
+  }
 }
-function closePoemEditor(){ document.getElementById('poemOverlay').classList.remove('open'); }
+async function closePoemEditor(force){
+  if(edDirty && force!==true){
+    const ok=await askConfirm('Ýatda saklanmadyk üýtgeşmeler bar.<br>Redaktor ýapylsynmy?<br><span style="font-size:12px;color:var(--ink-soft);">Ýazanlaryňyz taslama hökmünde saklanar — indiki gezek dikeldip bilersiňiz.</span>',{okText:'Hawa, ýap',icon:'✍️'});
+    if(!ok) return;
+    saveDraft();
+  }
+  edDirty=false;
+  document.getElementById('poemOverlay').classList.remove('open');
+}
 
+// ----- Bellik gurallary -----
 function applyMarkup(kind){
   const ta=document.getElementById('poemText');
   const s=ta.selectionStart, e=ta.selectionEnd, val=ta.value, sel=val.slice(s,e);
   let out, off=0;
   if(kind==='bold'){ out='**'+(sel||'tekst')+'**'; off=2; }
   else if(kind==='italic'){ out='*'+(sel||'tekst')+'*'; off=1; }
-  else if(kind==='quote'){ const ls=val.lastIndexOf('\n',s-1)+1; ta.value=val.slice(0,ls)+'> '+val.slice(ls); ta.focus(); return; }
-  else if(kind==='stanza'){ out=(val[s-1]==='\n'||s===0?'':'\n')+'***\n'; ta.value=val.slice(0,s)+out+val.slice(e); ta.focus(); ta.selectionStart=ta.selectionEnd=s+out.length; return; }
+  else if(kind==='quote'){
+    const ls=val.lastIndexOf('\n',s-1)+1;
+    ta.value=val.slice(0,ls)+'> '+val.slice(ls);
+    ta.focus(); edChanged(); return;
+  }
+  else if(kind==='stanza'){
+    out=(val[s-1]==='\n'||s===0?'':'\n')+'***\n';
+    ta.value=val.slice(0,s)+out+val.slice(e);
+    ta.focus(); ta.selectionStart=ta.selectionEnd=s+out.length;
+    edChanged(); return;
+  }
   ta.value=val.slice(0,s)+out+val.slice(e); ta.focus();
   if(sel){ ta.selectionStart=s; ta.selectionEnd=s+out.length; } else { ta.selectionStart=ta.selectionEnd=s+off; }
+  edChanged();
 }
 
-async function savePoem(){
+// Teksti N setirden bir bent bolar ýaly awtomatik bölýär (boş setir bilen, *** goýmaýar)
+function autoStanza(){
+  const ta=document.getElementById('poemText');
+  const n=Math.max(2, Math.min(20, parseInt(document.getElementById('stanzaSize').value)||4));
+  const lines=ta.value.split('\n').map(function(l){ return l.trim(); }).filter(function(l){ return l.length>0 && l!=='***'; });
+  if(lines.length===0){ toast('Ilki goşgynyň tekstini ýazyň','err'); return; }
+  const groups=[];
+  for(let i=0;i<lines.length;i+=n) groups.push(lines.slice(i,i+n).join('\n'));
+  ta.value=groups.join('\n\n');
+  toast(groups.length+' bent döredildi ('+n+' setirden)','ok');
+  edChanged();
+}
+
+// ----- Ýatda saklamak / pozmak -----
+async function savePoem(force){
   const title=document.getElementById('poemTitle').value.trim();
   const text=document.getElementById('poemText').value.trim();
   const epigraph=document.getElementById('poemEpigraph').value.trim();
-  if(!curPoetId){ toast('Şahyr saýlaň', 'err'); return; }
-  if(!title||!text){ toast('Ady we teksti ýazyň','err'); return; }
+  const section=poemSectionPayload();
+  if(!curPoetId){ toast('Ilki şahyry saýlaň','err'); return; }
+  if(!title){ toast('Goşgynyň adyny ýazyň','err'); document.getElementById('poemTitle').focus(); return; }
+  if(!text){ toast('Goşgynyň tekstini ýazyň','err'); document.getElementById('poemText').focus(); return; }
+
+  const btn=document.getElementById('savePoemBtn');
+  btn.disabled=true; btn.textContent='Barlanýar…';
 
   // gaýtalanma barlagy
-  const btn=document.getElementById('savePoemBtn');
-  btn.disabled=true;
-  try{
-    const chk=await api('?action=checkDuplicate','POST',{ text, poemId: editingPoemId });
-    if(chk.duplicates && chk.duplicates.length){
-      const w=document.getElementById('dupWarn');
-      const list=chk.duplicates.map(d=>'«'+esc(d.title)+'» — '+esc(d.poetName)).join(', ');
-      w.innerHTML='<b>Üns beriň:</b> meňzeş goşgy bazada eýýäm bar: '+list+'.<br>Şonda-da saklajak bolsaňyz, ýene bir gezek «Ýatda sakla» basyň.';
-      w.className='dup-warn show';
-      btn.disabled=false;
-      btn.dataset.confirmed = btn.dataset.confirmed==='1' ? '1' : 'pending';
-      if(btn.dataset.confirmed!=='1'){ btn.dataset.confirmed='1'; return; }
-    }
-  }catch(e){}
-  btn.dataset.confirmed='';
+  if(force!==true){
+    try{
+      const chk=await api('?action=checkDuplicate','POST',{ text:text, poemId:editingPoemId });
+      if(chk.duplicates && chk.duplicates.length){
+        const w=document.getElementById('dupWarn');
+        const list=chk.duplicates.map(function(d){ return '«'+esc(d.title)+'» — '+esc(d.poetName); }).join(', ');
+        w.innerHTML='<b>Üns beriň:</b> meňzeş goşgy hazynada eýýäm bar: '+list+'.'+
+          '<br><button class="btn btn-outline btn-sm" onclick="savePoem(true)">Şonda-da ýatda sakla</button>';
+        w.className='dup-warn show';
+        btn.disabled=false; btn.textContent='Ýatda sakla';
+        w.scrollIntoView({behavior:'smooth',block:'nearest'});
+        return;
+      }
+    }catch(e){}
+  }
 
+  btn.textContent='Ýatda saklanýar…';
   try{
     if(editingPoemId){
-      await api('?action=poem','PUT',{ poetId:curPoetId, poemId:editingPoemId, title, text, epigraph });
-      toast('Üýtgedildi','ok'); markChanged();
+      await api('?action=poem','PUT',{ poetId:curPoetId, poemId:editingPoemId, title:title, text:text, epigraph:epigraph, section:section });
+      toast('Goşgy üýtgedildi','ok');
     } else {
-      await api('?action=poem','POST',{ poetId:curPoetId, title, text, epigraph });
-      toast('Goşuldy','ok'); markChanged();
+      await api('?action=poem','POST',{ poetId:curPoetId, title:title, text:text, epigraph:epigraph, section:section });
+      toast('Goşgy goşuldy','ok');
     }
-    closePoemEditor();
+    markChanged();
+    edDirty=false;
+    clearDraft();
+    closePoemEditor(true);
     await refreshPoets();
     await selectPoet(curPoetId);
-    renderPoets();
   }catch(e){ toast(e.message,'err'); }
-  finally{ btn.disabled=false; }
+  finally{ btn.disabled=false; btn.textContent='Ýatda sakla'; }
 }
 
 async function deletePoem(){
   if(!editingPoemId) return;
-  if(!confirm('Bu goşgyny pozmak?')) return;
+  const ok=await askConfirm('Bu goşgy pozulsynmy?<br><span style="font-size:12px;color:var(--ink-soft);">Bu amal yzyna gaýtarylmaýar.</span>',{okText:'Hawa, poz',danger:true});
+  if(!ok) return;
   try{
     await api('?action=poem','DELETE',{ poetId:curPoetId, poemId:editingPoemId });
-    toast('Pozuldy','ok'); markChanged(); closePoemEditor();
-    await refreshPoets(); await selectPoet(curPoetId); renderPoets();
+    toast('Goşgy pozuldy','ok'); markChanged();
+    edDirty=false;
+    closePoemEditor(true);
+    await refreshPoets(); await selectPoet(curPoetId);
   }catch(e){ toast(e.message,'err'); }
 }
 
@@ -847,10 +1816,34 @@ async function savePoet(){
     } else if(me.role==='admin'){
       await api('?action=poet','POST',payload); toast('Şahyr goşuldy','ok'); markChanged();
     } else {
-      await api('?action=proposePoet','POST',payload); toast('Tassyklamaga iberildi','ok'); markChanged();
+      await api('?action=proposePoet','POST',payload); toast('Admine iberildi — tassyklanandan soň sanawda görüner','ok'); markChanged();
     }
     closePoetEditor();
-    if(me.role==='admin'||editingPoetId){ await refreshPoets(); renderPoets(); if(curPoetId) selectPoet(curPoetId); }
+    if(me.role==='admin'||editingPoetId){
+      await refreshPoets();
+      if(!editingPoetId){
+        // Täze şahyr — hiç bir filtr ony gizlemez ýaly hemmesini arassalaýarys
+        searchMode='poets'; eraFilter='all';
+        document.getElementById('sm_poets').classList.add('on');
+        document.getElementById('sm_poems').classList.remove('on');
+        document.getElementById('poetTools').style.display='block';
+        ['all','XVIII_XIX','XX_XXI'].forEach(function(x){ document.getElementById('era_'+x).classList.toggle('on',x==='all'); });
+        document.getElementById('poetSearch').value='';
+        renderPoets();
+        // täze şahyra aýlanyp, ýalpyldy bilen görkezmek
+        const np=poets.find(function(p){ return p.fullName===fullName; });
+        if(np) setTimeout(function(){
+          const av=document.getElementById('av-'+np.id);
+          const row=av?av.closest('.poet-row'):null;
+          if(row){
+            row.classList.add('flash');
+            if(row.scrollIntoView) row.scrollIntoView({block:'center',behavior:'smooth'});
+            setTimeout(function(){ row.classList.remove('flash'); },2300);
+          }
+        },100);
+      } else renderPoets();
+      if(curPoetId) selectPoet(curPoetId);
+    }
     loadPending();
   }catch(e){ toast(e.message,'err'); }
 }
@@ -860,8 +1853,11 @@ async function deletePoetById(id){
   if(!id) return;
   const p=poets.find(x=>x.id===id);
   const isAdmin=me.role==='admin';
-  const msg=isAdmin ? '«'+(p?p.fullName:id)+'» şahyry we ähli goşgulary pozulsynmy?' : '«'+(p?p.fullName:id)+'» şahyry pozmak üçin admine teklip iberilsinmi?';
-  if(!confirm(msg)) return;
+  const nm=esc(p?p.fullName:id);
+  const ok=isAdmin
+    ? await askConfirm('«'+nm+'» şahyry we onuň <b>ähli goşgulary</b> pozulsynmy?<br><span style="font-size:12px;color:var(--ink-soft);">Bu amal yzyna gaýtarylmaýar.</span>',{okText:'Hawa, poz',danger:true})
+    : await askConfirm('«'+nm+'» şahyry pozmak üçin admine teklip iberilsinmi?',{okText:'Hawa, iber',icon:'📨'});
+  if(!ok) return;
   try{
     const r=await api('?action=poet','DELETE',{ id });
     if(r.deleted){
@@ -874,6 +1870,77 @@ async function deletePoetById(id){
       closePoetEditor(); loadPending();
     }
   }catch(e){ toast(e.message,'err'); }
+}
+
+// ----- USER MAIL -----
+async function loadMail(){
+  try{
+    const data=await api('?action=feedback');
+    const items=data.items||[];
+    const unread=items.filter(i=>!i.read).length;
+    const badge=document.getElementById('mailBadge');
+    if(unread>0){ badge.style.display='inline-block'; badge.textContent=unread; }
+    else badge.style.display='none';
+    if(!items.length){
+      document.getElementById('mailList').innerHTML='<div class="hint">Entäk hat ýok</div>';
+      return;
+    }
+    let html='';
+    items.forEach(it=>{
+      const when=(it.ts||'').replace('T',' ').slice(0,16);
+      const replies=Array.isArray(it.replies)?it.replies:[];
+      const canReply=!!(it.deviceId&&String(it.deviceId).length>=8);
+      const isLit=String(it.topic||'')==='literary';
+      const topicLbl=isLit?'Edebiýat':'Programma';
+      let thread='';
+      replies.forEach(r=>{
+        const rt=(r.ts||'').replace('T',' ').slice(0,16);
+        thread+='<div style="margin:10px 0 0;padding:10px 12px;background:var(--bg-warm);border-radius:10px;border-left:3px solid var(--gold);">'+
+          '<div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:4px;">Jogap'+(rt?' · '+esc(rt):'')+'</div>'+
+          '<div style="white-space:pre-wrap;font-size:13px;line-height:1.55;">'+esc(r.text||'')+'</div></div>';
+      });
+      html+='<div class="pend-card" style="'+(it.read&&!replies.length?'opacity:.72;':'')+'">'+
+        '<div class="ph"><div style="flex:1;">'+
+        '<h4 class="serif">'+esc(it.name||it.email)+'</h4>'+
+        '<div class="meta"><span class="status-pill '+(isLit?'approved':'pending')+'" style="margin-right:8px;">'+esc(topicLbl)+'</span>'+
+        '<a href="mailto:'+esc(it.email)+'" style="color:var(--gold);font-weight:600;">'+esc(it.email)+'</a>'+
+        (when?' · '+esc(when):'')+(it.appVersion?' · v'+esc(it.appVersion):'')+'</div></div>'+
+        (replies.length?'<span class="status-pill approved">Jogaply</span>':(it.read?'':'<span class="status-pill pending">Täze</span>'))+
+        '</div>'+
+        '<div class="pbio" style="white-space:pre-wrap;">'+esc(it.message)+'</div>'+
+        thread+
+        (canReply
+          ? '<div class="fl" style="margin:12px 0 0;"><textarea id="reply-'+esc(it.id)+'" placeholder="Jogaby programmada görkez…" style="min-height:88px;"></textarea></div>'
+          : '<div style="font-size:12px;color:var(--ink-soft);margin-top:10px;">Bu hatda enjam ýok — diňe e-poçta bilen jogap berip bolýar.</div>')+
+        '<div class="pend-actions" style="margin-top:10px;">'+
+        (canReply?'<button class="btn btn-gold btn-sm" onclick="sendMailReply(\''+it.id+'\')">Jogap iber</button>':'')+
+        (!it.read?'<button class="btn btn-outline btn-sm" onclick="markMailRead(\''+it.id+'\')">Okadym</button>':'')+
+        '<button class="btn btn-danger btn-sm" onclick="deleteMail(\''+it.id+'\')">Poz</button>'+
+        '</div></div>';
+    });
+    document.getElementById('mailList').innerHTML=html;
+  }catch(e){
+    document.getElementById('mailList').innerHTML='<div class="hint">'+esc(e.message)+'</div>';
+  }
+}
+async function sendMailReply(id){
+  const ta=document.getElementById('reply-'+id);
+  const text=(ta&&ta.value||'').trim();
+  if(text.length<2){ toast('Jogap ýazyň','err'); return; }
+  try{
+    await api('?action=feedbackReply','POST',{id:id,text:text});
+    toast('Jogap programmada görüner','ok');
+    loadMail();
+  }catch(e){ toast(e.message,'err'); }
+}
+async function markMailRead(id){
+  try{ await api('?action=feedbackRead','POST',{id:id}); loadMail(); }
+  catch(e){ toast(e.message,'err'); }
+}
+async function deleteMail(id){
+  if(!await askConfirm('Bu hat pozulsynmy?<br><span style="font-size:12px;color:var(--ink-soft);">Bu amal yzyna gaýtarylmaýar.</span>',{okText:'Hawa, poz',danger:true})) return;
+  try{ await api('?action=feedback&id='+encodeURIComponent(id),'DELETE'); loadMail(); toast('Pozuldy','ok'); }
+  catch(e){ toast(e.message,'err'); }
 }
 
 // ----- PENDING -----
@@ -914,7 +1981,7 @@ function renderPending(items){
 async function reviewPoet(proposalId, approve, isDelete){
   let reason='';
   if(!approve){ reason=prompt('Ret ediş sebäbi (islege görä):')||''; }
-  else { if(!confirm(isDelete?'Bu şahyry pozmagy tassyklamak?':'Bu şahyry tassyklap, hazyna goşmak?')) return; }
+  else { if(!await askConfirm(isDelete?'Bu şahyryň pozulmagy tassyklansynmy?':'Bu şahyr tassyklanyp, hazyna goşulsynmy?',{okText:'Hawa, tassykla',danger:isDelete})) return; }
   try{
     await api('?action=reviewPoet','POST',{ proposalId, approve, reason });
     toast(approve?(isDelete?'Şahyr pozuldy':'Tassyklandy we goşuldy'):'Ret edildi','ok'); if(approve) markChanged();
@@ -960,8 +2027,8 @@ async function loadBackups(){
 }
 
 async function doRestore(name){
-  if(!confirm('DIKKAT: Häzirki ähli maglumat «'+name+'» nusgasy bilen çalşyrylar!\n\nSoňky nusgadan soň edilen üýtgeşmeler ýitér. Dowam etmelimi?')) return;
-  if(!confirm('Hakykatdanam dikeltmelimi? Bu amal yzyna gaýtaryp bolmaýar.')) return;
+  if(!await askConfirm('<b>ÜNS BERIŇ:</b> häzirki ähli maglumat «'+esc(name)+'» nusgasy bilen çalşyrylar!<br>Şol nusgadan soň edilen üýtgeşmeler ýiter.',{okText:'Düşündim, dowam et',danger:true})) return;
+  if(!await askConfirm('Hakykatdanam dikeldilsinmi? Bu amal yzyna gaýtarylmaýar.',{okText:'Hawa, dikelt',danger:true})) return;
   toast('Dikeldilýär... (1-2 minut alyp biler)');
   try{
     const r=await api('?action=restore','POST',{ name });
@@ -979,89 +2046,169 @@ function parseBulkText(raw){
     .filter(b => b.length > 0)
     .map(block => {
       const lines = block.split('\n');
-      const title = lines[0].trim();
-      const text = lines.slice(1).join('\n').trim();
-      return { title, text };
+      let i = 0;
+      let section;
+      const first = (lines[0] || '').trim();
+      const m = first.match(/^@razdel(?:\s+(.*))?$/i);
+      if (m) {
+        section = m[1] != null ? m[1].trim() : '';
+        i = 1;
+      }
+      const title = (lines[i] || '').trim();
+      const text = lines.slice(i + 1).join('\n').trim();
+      const out = { title, text };
+      if (section !== undefined) out.section = section;
+      return out;
     })
     .filter(p => p.title && p.text);
 }
 
+// ================= KÖP GOŞGY (janly öňsyn bilen) =================
+function setBulkTab(showPv){
+  document.getElementById('bulkModal').classList.toggle('show-pv',showPv);
+  document.getElementById('bt_write').classList.toggle('on',!showPv);
+  document.getElementById('bt_view').classList.toggle('on',showPv);
+}
 function openBulk(){
+  bulkPoems=[];
   document.getElementById('bulkText').value='';
-  document.getElementById('bulkPreview').style.display='none';
-  document.getElementById('bulkPreview').innerHTML='';
-  document.getElementById('bulkDupWarn').className='dup-warn';
+  document.getElementById('bulkPreview').innerHTML='<div class="pv-empty">Tekst ýazylanda goşgular şu ýerde awtomat görkeziler</div>';
+  document.getElementById('btCount').textContent='';
+  const w=document.getElementById('bulkDupWarn'); w.className='dup-warn'; w.innerHTML='';
+  document.getElementById('docxStatus').textContent='';
   const picker=document.getElementById('bulkPickerWrap');
   const forPoet=document.getElementById('bulkForPoet');
   if(curPoetId){
     picker.style.display='none';
-    const poet=poets.find(p=>p.id===curPoetId);
+    const poet=poets.find(function(p){ return p.id===curPoetId; });
     forPoet.textContent=poet?poet.fullName:'';
     forPoet.style.display='block';
   } else {
     picker.style.display='block';
     forPoet.style.display='none';
     const sel=document.getElementById('bulkPoetPick');
-    const sorted=poets.slice().sort((a,b)=>a.fullName.localeCompare(b.fullName));
-    sel.innerHTML='<option value="">— Şahyr saýlaň —</option>'+sorted.map(p=>'<option value="'+p.id+'">'+esc(p.fullName)+'</option>').join('');
+    const sorted=poets.slice().sort(function(a,b){ return tkCompare(a.fullName,b.fullName); });
+    sel.innerHTML='<option value="">— Şahyr saýlaň —</option>'+sorted.map(function(p){ return '<option value="'+p.id+'">'+esc(p.fullName)+'</option>'; }).join('');
   }
+  setBulkTab(false);
+  updateBulkBtn();
   document.getElementById('bulkOverlay').classList.add('open');
 }
-function closeBulk(){ document.getElementById('bulkOverlay').classList.remove('open'); }
-
-function previewBulk(){
-  const raw=document.getElementById('bulkText').value;
-  const poems=parseBulkText(raw);
-  const prev=document.getElementById('bulkPreview');
-  if(poems.length===0){ prev.innerHTML='<div class="hint" style="padding:16px;">Hiç goşgy tapylmady. Goşgulary <b>===</b> bilen bölüň.</div>'; prev.style.display='block'; return; }
-  let html='<div style="margin-bottom:12px;font-weight:600;color:var(--gold);">'+poems.length+' sany goşgy tapyldy: <span style="font-weight:400;color:var(--ink-soft);font-size:12px;">(ýalňyş bölünen bolsa ⬆ bilen birleşdiriň)</span></div>';
-  poems.forEach((p,i)=>{
-    html+='<div class="poem-item" style="cursor:default;display:flex;gap:10px;align-items:flex-start;">'+
-      '<div style="flex:1;min-width:0;"><div class="pt">'+(i+1)+'. '+esc(p.title)+'</div>'+
-      '<div class="pe">'+esc(p.text.slice(0,100))+'</div>'+
-      '<div style="font-size:11px;color:var(--ink-soft);margin-top:4px;">'+p.text.split('\n').filter(l=>l.trim()).length+' setir</div></div>'+
-      (i>0?'<button class="btn btn-outline btn-sm" style="flex-shrink:0;" onclick="mergeBulk('+i+')" title="Öňki goşga birleşdir">⬆ Birleşdir</button>':'')+
-      '</div>';
-  });
-  prev.innerHTML=html; prev.style.display='block';
+async function closeBulk(force){
+  if(force!==true && bulkPoems.length){
+    const ok=await askConfirm('Entek goşulmadyk '+bulkPoems.length+' goşgy bar.<br>Penjire ýapylsynmy?',{okText:'Hawa, ýap',icon:'✍️'});
+    if(!ok) return;
+  }
+  document.getElementById('bulkOverlay').classList.remove('open');
 }
-
+function onBulkInput(){
+  clearTimeout(bulkTimer);
+  bulkTimer=setTimeout(function(){
+    bulkPoems=parseBulkText(document.getElementById('bulkText').value);
+    renderBulkPreview();
+  },250);
+}
+// Goşguda mesele barmy?
+function bulkIssue(p){
+  if(!p.title) return 'ady ýok';
+  const n=p.text.split('\n').filter(function(l){ return l.trim()&&l.trim()!=='***'; }).length;
+  if(n<2) return 'teksti gaty gysga ('+n+' setir) — belki öňki goşgynyň dowamydyr?';
+  if(p.title.length>120) return 'ady aşa uzyn — belki setirler garyşandyr?';
+  return null;
+}
+function renderBulkPreview(){
+  const prev=document.getElementById('bulkPreview');
+  const n=bulkPoems.length;
+  document.getElementById('btCount').textContent=n?(' · '+n):'';
+  updateBulkBtn();
+  if(!n){
+    prev.innerHTML='<div class="pv-empty">'+(document.getElementById('bulkText').value.trim()
+      ?'Goşgy tapylmady.<br>Her goşgyny <b>===</b> bilen aýryň — 1-nji setir ady, galany teksti.'
+      :'Tekst ýazylanda goşgular şu ýerde awtomat görkeziler')+'</div>';
+    return;
+  }
+  const bad=bulkPoems.filter(function(p){ return bulkIssue(p); }).length;
+  let html='<div class="bp-sum">'+n+' goşgy taýýar'+(bad?' · <span class="warn">'+bad+' sanysynda mesele bar ⚠</span>':' ✓')+'</div>';
+  bulkPoems.forEach(function(p,i){
+    const issue=bulkIssue(p);
+    html+='<div class="bp-card'+(issue?' bad':'')+'">'+
+      (p.section!==undefined?'<span class="bp-sec-tag">'+(String(p.section).trim()?'📂 '+esc(p.section):'📂 Razdelden çykýar')+'</span>':'')+
+      '<div class="bp-top">'+
+        '<span class="bp-num">'+(i+1)+'.</span>'+
+        '<input class="bp-title-in" value="'+esc(p.title).replace(/"/g,'&quot;')+'" onchange="bulkEditTitle('+i+',this.value)" title="Ady şu ýerde düzedip bolýar">'+
+        '<div class="bp-acts">'+
+          (i>0?'<button onclick="mergeBulk('+i+')" title="Öňki goşga birleşdir">⬆</button>':'')+
+          '<button onclick="removeBulk('+i+')" title="Sanawdan aýyr">✕</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="bp-ex">'+esc(stripMk(p.text).slice(0,110))+'</div>'+
+      '<div class="bp-meta">'+p.text.split('\n').filter(function(l){ return l.trim(); }).length+' setir'+(issue?' · <span class="err-t">'+issue+'</span>':'')+'</div>'+
+    '</div>';
+  });
+  prev.innerHTML=html;
+}
+// bulkPoems massiwini yzyna tekste öwürmek (razdel bellikleri saklanýar)
+function serializeBulk(){
+  document.getElementById('bulkText').value=bulkPoems.map(function(p){
+    return (p.section!==undefined?('@razdel'+(String(p.section).trim()?' '+p.section:'')+'\n'):'')+p.title+'\n'+p.text;
+  }).join('\n===\n');
+}
+function bulkEditTitle(i,v){
+  if(!bulkPoems[i]) return;
+  bulkPoems[i].title=v.trim();
+  serializeBulk(); renderBulkPreview();
+}
 // i-nji goşgyny öňki (i-1) goşga birleşdirmek
 function mergeBulk(i){
-  const poems=parseBulkText(document.getElementById('bulkText').value);
-  if(i<=0||i>=poems.length) return;
-  poems[i-1].text += '\n\n' + poems[i].title + '\n' + poems[i].text;
-  poems.splice(i,1);
-  document.getElementById('bulkText').value=poems.map(p=>p.title+'\n'+p.text).join('\n===\n');
-  previewBulk();
-  toast('Birleşdirildi — '+poems.length+' goşgy galdy','ok');
+  if(i<=0||i>=bulkPoems.length) return;
+  bulkPoems[i-1].text += '\n\n' + bulkPoems[i].title + '\n' + bulkPoems[i].text;
+  bulkPoems.splice(i,1);
+  serializeBulk(); renderBulkPreview();
+  toast('Birleşdirildi — '+bulkPoems.length+' goşgy galdy','ok');
 }
-
+function removeBulk(i){
+  if(!bulkPoems[i]) return;
+  bulkPoems.splice(i,1);
+  serializeBulk(); renderBulkPreview();
+  toast('Aýryldy — '+bulkPoems.length+' goşgy galdy','ok');
+}
+function updateBulkBtn(){
+  const b=document.getElementById('saveBulkBtn');
+  b.textContent=bulkPoems.length?('Hemmesini goş ('+bulkPoems.length+')'):'Hemmesini goş';
+}
 async function saveBulk(){
-  const raw=document.getElementById('bulkText').value;
-  const poems=parseBulkText(raw);
-  if(poems.length===0){ toast('Goşgy tapylmady — === bilen bölüň','err'); return; }
+  bulkPoems=parseBulkText(document.getElementById('bulkText').value);
+  if(!bulkPoems.length){ toast('Goşar ýaly goşgy ýok — her goşgyny === bilen aýryň','err'); return; }
   const poetId = curPoetId || document.getElementById('bulkPoetPick').value;
-  if(!poetId){ toast('Şahyr saýlaň','err'); return; }
+  if(!poetId){ toast('Ilki şahyry saýlaň','err'); return; }
+  const bad=bulkPoems.filter(function(p){ return bulkIssue(p); }).length;
+  if(bad){
+    const ok=await askConfirm(bad+' sany goşguda mesele bar (öňsynde gyzyl bellenen).<br>Şonda-da hemmesi goşulsynmy?',{okText:'Hawa, goş'});
+    if(!ok) return;
+  }
   const btn=document.getElementById('saveBulkBtn');
-  btn.disabled=true; btn.textContent='Ýüklenýär...';
+  btn.disabled=true; btn.textContent=bulkPoems.length+' goşgy ýüklenýär…';
   try{
-    const r=await api('?action=bulkPoems','POST',{ poetId, poems });
+    const r=await api('?action=bulkPoems','POST',{ poetId:poetId, poems:bulkPoems });
     let msg=r.addedCount+' goşgy goşuldy';
-    if(r.duplicateCount>0) msg+=' ('+r.duplicateCount+' sanysy gaýtalanýan — goşulmady)';
+    if(r.duplicateCount>0) msg+=' · '+r.duplicateCount+' sanysy gaýtalanýandygy üçin goşulmady';
     toast(msg,'ok'); markChanged();
+    delete poemsCache[poetId];
     if(r.duplicateCount>0){
       const w=document.getElementById('bulkDupWarn');
-      w.innerHTML='<b>Gaýtalanýan goşgular (goşulmady):</b><br>'+r.duplicates.map(d=>'• «'+esc(d.title)+'» — eýýäm bar: '+esc(d.existsIn)).join('<br>');
+      w.innerHTML='<b>Gaýtalanýan goşgular (goşulmady):</b><br>'+r.duplicates.map(function(d){ return '• «'+esc(d.title)+'» — eýýäm bar: '+esc(d.existsIn); }).join('<br>');
       w.className='dup-warn show';
+      bulkPoems=[]; document.getElementById('bulkText').value='';
+      renderBulkPreview();
+      setBulkTab(true);
     } else {
-      closeBulk();
+      bulkPoems=[];
+      closeBulk(true);
     }
     await refreshPoets();
-    if(curPoetId) await selectPoet(curPoetId);
-    renderPoets();
+    if(curPoetId===poetId) await selectPoet(poetId); else renderPoets();
   }catch(e){ toast(e.message,'err'); }
-  finally{ btn.disabled=false; btn.textContent='Hemmesini goş'; }
+  finally{ btn.disabled=false; updateBulkBtn(); }
 }
 
 // ----- WORD FAÝLY OKAMAK -----
@@ -1072,7 +2219,7 @@ async function handleDocxFile(ev){
   status.textContent='Okalýar...';
   try{
     const arrayBuffer=await file.arrayBuffer();
-    const result=await mammoth.convertToHtml({arrayBuffer});
+    const result=await mammoth.convertToHtml({arrayBuffer},{ignoreEmptyParagraphs:false});
     const text=docxHtmlToMarkupText(result.value);
     const poems=splitDocxPoems(text);
     if(poems.length===0){
@@ -1083,8 +2230,10 @@ async function handleDocxFile(ev){
     // Normallaşdyrylan formatda textarea doldurmak (title\ntext\n===)
     document.getElementById('bulkText').value=poems.map(p=>p.title+'\n'+p.text).join('\n===\n');
     status.textContent='✓ '+poems.length+' goşgy tapyldy';
-    toast(poems.length+' goşgy tapyldy — barlaň we goşuň','ok');
-    previewBulk();
+    toast(poems.length+' goşgy tapyldy — öňsynde barlaň','ok');
+    bulkPoems=parseBulkText(document.getElementById('bulkText').value);
+    renderBulkPreview();
+    if(window.innerWidth<=780) setBulkTab(true);
   }catch(e){
     status.textContent='Okap bolmady';
     toast('Word faýly okap bolmady: '+e.message,'err');
@@ -1117,8 +2266,8 @@ function docxHtmlToMarkupText(html){
     const tag=node.tagName.toLowerCase();
     if(tag==='p'||tag==='h1'||tag==='h2'||tag==='h3'||tag==='h4'){
       const t=inlineOf(node).replace(/\u00a0/g,' ');
-      // p içindäki <br> köp setire bölünýär
-      t.split('\n').forEach(l=>lines.push(l.trimEnd()));
+      if(t.trim()===''){ lines.push(''); } // boş abzas = boş setir (goşgy bölüji üçin MÖHÜM)
+      else t.split('\n').forEach(l=>lines.push(l.trimEnd()));
     } else if(tag==='table'||tag==='ul'||tag==='ol'){
       const t=node.textContent.trim();
       if(t) t.split('\n').forEach(l=>lines.push(l.trim()));
@@ -1168,8 +2317,13 @@ function splitDocxPoems(text){
     const prevEndsIncomplete=prev&&/[,;:—–-]\s*$/.test(prev.text.replace(/\*+/g,'').trim());
     const startsLower=/^[a-zäöüýçşňž]/.test(firstClean);
     const singleLine=block.length===1;
+    const smallBlock=block.length<=3;
 
-    const isContinuation = prev && (singleLine || startsLower || prevEndsIncomplete);
+    // Diňe KIÇI bölekler birleşdirilýär (doly goşgyny ýuwutmaz ýaly):
+    // - ýeke setir (üzülen soňky setir)
+    // - kiçi harp bilen başlaýan KIÇI bölek (dowamy)
+    // - öňki otur bilen gutaran + KIÇI bölek
+    const isContinuation = prev && (singleLine || (startsLower && smallBlock) || (prevEndsIncomplete && smallBlock));
 
     if(isContinuation){
       const frag=block.join('\n').trim();
@@ -1186,6 +2340,37 @@ function splitDocxPoems(text){
   }
   return poems;
 }
+
+// ----- KLAWIATURA GYSGA ÝOLLARY -----
+function overlayOpen(id){ return document.getElementById(id).classList.contains('open'); }
+document.addEventListener('keydown', function(e){
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){
+    if(overlayOpen('cfOverlay')){ e.preventDefault(); }
+    else if(overlayOpen('poemOverlay')){ e.preventDefault(); savePoem(); }
+    else if(overlayOpen('bulkOverlay')){ e.preventDefault(); saveBulk(); }
+    else if(overlayOpen('poetOverlay')){ e.preventDefault(); savePoet(); }
+  }
+  else if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){
+    const s=document.getElementById('poetSearch');
+    if(s && document.getElementById('app').style.display!=='none'
+       && !overlayOpen('poemOverlay') && !overlayOpen('bulkOverlay') && !overlayOpen('poetOverlay')){
+      e.preventDefault();
+      switchTab('poets');
+      document.body.classList.remove('detail-open');
+      s.focus(); s.select();
+    }
+  }
+  else if(e.key==='Escape'){
+    if(overlayOpen('cfOverlay')) cfDone(false);
+    else if(overlayOpen('poemOverlay')) closePoemEditor();
+    else if(overlayOpen('bulkOverlay')) closeBulk();
+    else if(overlayOpen('poetOverlay')) closePoetEditor();
+  }
+});
+// Sahypa ýapylanda ýatda saklanmadyk goşgy bar bolsa duýdurmak
+window.addEventListener('beforeunload', function(e){
+  if(edDirty && overlayOpen('poemOverlay')){ saveDraft(); e.preventDefault(); e.returnValue=''; }
+});
 
 document.getElementById('lp').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
 </script>
