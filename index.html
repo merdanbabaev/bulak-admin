@@ -1365,9 +1365,7 @@ function renderDashboard(){
 
   let publishBtn = '';
   if(!needsMigration){
-    publishBtn = '<button class="btn-publish" onclick="doPublish()"'+(needsPublish?'':' disabled')+'>📤 Ähli neşir et</button>'+
-      '<button class="btn btn-outline btn-sm" onclick="switchTab(\'notice\')">Bildiriş</button>'+
-      '<button class="btn btn-outline btn-sm" onclick="switchTab(\'hero\')">Baş slaýd</button>';
+    publishBtn = '<button class="btn-publish" onclick="doPublish()"'+(needsPublish?'':' disabled')+'>📤 Ähli neşir et</button>';
   }
 
   el.innerHTML =
@@ -2061,6 +2059,12 @@ async function deletePoem(){
     await refreshPoets(); await selectPoet(curPoetId);
   }catch(e){ toast(e.message,'err'); }
 }
+
+// ----- BAŞLYK ÇARÇUWASY -----
+// Programmadaky `Alignment(0, y)` + `BoxFit.cover` bilen deň işleýär:
+// y = -1 suratyň ýokary gyrasy, y = +1 aşaky gyrasy, 0 ortasy.
+// Deslapky baha `Poet.heroAlignY` bilen bir bolmaly (lib/models.dart).
+const ALIGN_DEFAULT = -0.85;
 
 function alignToPct(y){ return ((Number(y) + 1) / 2 * 100).toFixed(1) + '%'; }
 
